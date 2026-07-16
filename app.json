@@ -40,6 +40,7 @@
       "expo-notifications",
       "expo-audio",
       "react-native-health-connect",
+      "./plugins/withHealthConnectPermissionDelegate.js",
       [
         "expo-build-properties",
         {
