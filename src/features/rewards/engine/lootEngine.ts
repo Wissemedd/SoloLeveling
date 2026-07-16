@@ -1,5 +1,6 @@
 import type { ChestTier, LootReward } from "../types";
 import type { RarityTier } from "@/design-system/theme";
+import { generateId } from "@/lib/utils/id";
 
 const RARITY_WEIGHTS: Record<RarityTier, number> = {
   common: 60,
@@ -51,7 +52,7 @@ function rollRarity(weights: Record<RarityTier, number>): RarityTier {
 function pickCosmetic(rarity: RarityTier): LootReward {
   const pool = COSMETIC_POOL[rarity];
   const pick = pool[Math.floor(Math.random() * pool.length)];
-  return { id: `${pick.kind}-${Date.now()}-${Math.floor(Math.random() * 1000)}`, rarity, ...pick };
+  return { id: generateId(pick.kind), rarity, ...pick };
 }
 
 /** Every workout chest guarantees gold, plus a chance at a cosmetic drop. */
@@ -62,7 +63,7 @@ export function rollChest(tier: ChestTier = "standard"): LootReward[] {
     tier === "legendary" ? 200 + Math.floor(Math.random() * 300) : tier === "boss" ? 80 + Math.floor(Math.random() * 120) : 15 + Math.floor(Math.random() * 35);
 
   const rewards: LootReward[] = [
-    { id: `gold-${Date.now()}`, kind: "gold", rarity: goldRarity, label: "Gold", amount: goldAmount },
+    { id: generateId("gold"), kind: "gold", rarity: goldRarity, label: "Gold", amount: goldAmount },
   ];
 
   const cosmeticChance = tier === "legendary" ? 1 : tier === "boss" ? 0.6 : 0.35;

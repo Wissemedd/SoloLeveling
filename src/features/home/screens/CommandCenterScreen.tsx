@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -52,7 +52,7 @@ export function CommandCenterScreen({ navigation }: Props) {
     syncBossWeek();
   }, [reconcileStreakOnOpen, reconcileEnergyOnOpen, refreshBoard, syncBossWeek]);
 
-  const todaysQuest = missions.find((m) => m.period === "daily" && !m.completedAt) ?? null;
+  const todaysQuest = useMemo(() => missions.find((m) => m.period === "daily" && !m.completedAt) ?? null, [missions]);
   const streakStatus = getStreakStatus(streak);
 
   useEffect(() => {
@@ -63,9 +63,10 @@ export function CommandCenterScreen({ navigation }: Props) {
   const daysSinceLastWorkout = history[0]
     ? Math.floor((Date.now() - new Date(history[0].completedAt).getTime()) / 86_400_000)
     : null;
-  const workoutsInLast7Days = history.filter(
-    (h) => Date.now() - new Date(h.completedAt).getTime() < 7 * 86_400_000,
-  ).length;
+  const workoutsInLast7Days = useMemo(
+    () => history.filter((h) => Date.now() - new Date(h.completedAt).getTime() < 7 * 86_400_000).length,
+    [history],
+  );
 
   return (
     <ScreenBackground accent="neon">

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { appStorage } from "@/lib/storage/storage";
+import { generateId } from "@/lib/utils/id";
 import { getItemDefinition } from "../data/items";
 import { canEquip, slotForCategory } from "../engine/inventoryEngine";
 import { EQUIPMENT_SLOT_IDS } from "../types";
@@ -42,7 +43,7 @@ export const useInventoryStore = create<InventoryStore>()(
         }
 
         const instance: InventoryItemInstance = {
-          instanceId: `${itemId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          instanceId: generateId(itemId),
           itemId,
           quantity: def.stackable ? quantity : 1,
           upgradeLevel: 0,

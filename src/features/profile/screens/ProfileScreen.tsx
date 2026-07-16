@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ScreenBackground, GlassPanel, RankBadge, StatBar, SectionHeader, Chip, GateEmblem } from "@/design-system/components";
+import { ScreenBackground, GlassPanel, RankBadge, StatBar, SectionHeader, Chip, GateEmblem, MenuRow, StatTile } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useWorkoutStore } from "@/features/workouts/store/workoutStore";
@@ -112,9 +112,15 @@ export function ProfileScreen() {
         ) : null}
 
         <View style={styles.statRow}>
-          <StatTile icon="flame" label="Streak" value={`${longestStreak}d`} />
-          <StatTile icon="barbell" label="Workouts" value={`${totalWorkouts}`} />
-          <StatTile icon="diamond" label="Gold" value={`${gold}`} />
+          <GlassPanel glow="neon" style={styles.statTile}>
+            <StatTile icon="flame" label="Streak" value={`${longestStreak}d`} />
+          </GlassPanel>
+          <GlassPanel glow="neon" style={styles.statTile}>
+            <StatTile icon="barbell" label="Workouts" value={`${totalWorkouts}`} />
+          </GlassPanel>
+          <GlassPanel glow="neon" style={styles.statTile}>
+            <StatTile icon="diamond" label="Gold" value={`${gold}`} />
+          </GlassPanel>
         </View>
 
         <SectionHeader title="Collection" subtitle={`${collection.length} cosmetics earned`} />
@@ -142,38 +148,6 @@ export function ProfileScreen() {
   );
 }
 
-function StatTile({ icon, label, value }: { icon: keyof typeof Ionicons.glyphMap; label: string; value: string }) {
-  return (
-    <GlassPanel glow="neon" style={styles.statTile}>
-      <Ionicons name={icon} size={18} color={colors.neon[300]} />
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </GlassPanel>
-  );
-}
-
-function MenuRow({
-  icon,
-  label,
-  hint,
-  onPress,
-}: {
-  icon: keyof typeof Ionicons.glyphMap;
-  label: string;
-  hint: string;
-  onPress?: () => void;
-}) {
-  const row = (
-    <GlassPanel glow="none" style={styles.menuRow}>
-      <Ionicons name={icon} size={18} color={colors.slate} />
-      <Text style={styles.menuLabel}>{label}</Text>
-      {hint ? <Text style={styles.menuHint}>{hint}</Text> : null}
-      <Ionicons name="chevron-forward" size={16} color={colors.slate} />
-    </GlassPanel>
-  );
-  return onPress ? <Pressable onPress={onPress}>{row}</Pressable> : row;
-}
-
 const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48, gap: 16 },
   headerRow: { flexDirection: "row", alignItems: "center", gap: 16 },
@@ -188,12 +162,7 @@ const styles = StyleSheet.create({
   classPanelHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   classRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   statRow: { flexDirection: "row", gap: 10 },
-  statTile: { flex: 1, alignItems: "center", padding: 14, gap: 4 },
-  statValue: { fontFamily: fonts.display, fontSize: 16, color: colors.white },
-  statLabel: { fontFamily: fonts.body, fontSize: 11, color: colors.slate },
+  statTile: { flex: 1, padding: 14 },
   collectionGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   emptyText: { fontFamily: fonts.body, fontSize: 12, color: colors.slate },
-  menuRow: { flexDirection: "row", alignItems: "center", gap: 12, padding: 14, marginBottom: 10 },
-  menuLabel: { fontFamily: fonts.bodyMedium, fontSize: 14, color: colors.white, flex: 1 },
-  menuHint: { fontFamily: fonts.body, fontSize: 11, color: colors.slate },
 });

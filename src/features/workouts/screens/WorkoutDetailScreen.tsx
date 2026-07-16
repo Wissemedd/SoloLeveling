@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ScreenBackground, GlassPanel, GlowButton, Chip, StatBar } from "@/design-system/components";
+import { ScreenBackground, GlassPanel, GlowButton, Chip, StatBar, StatTile } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import { RPG_STAT_LABELS } from "@/features/player/types";
 import { usePlayerStore } from "@/features/player/store/playerStore";
@@ -36,9 +36,9 @@ export function WorkoutDetailScreen({ route, navigation }: Props) {
         <Text style={styles.description}>{workout.description}</Text>
 
         <View style={styles.metaGrid}>
-          <MetaBlock label="Duration" value={`${workout.durationMinutes} min`} />
-          <MetaBlock label="Calories" value={`${workout.estimatedCalories} kcal`} />
-          <MetaBlock label="XP Reward" value={`+${workout.xpReward}`} />
+          <StatTile label="Duration" value={`${workout.durationMinutes} min`} valueColor={colors.neon[300]} style={styles.metaBlock} />
+          <StatTile label="Calories" value={`${workout.estimatedCalories} kcal`} valueColor={colors.neon[300]} style={styles.metaBlock} />
+          <StatTile label="XP Reward" value={`+${workout.xpReward}`} valueColor={colors.neon[300]} style={styles.metaBlock} />
         </View>
 
         <GlassPanel glow="gold" style={styles.rewardsPanel}>
@@ -65,15 +65,6 @@ export function WorkoutDetailScreen({ route, navigation }: Props) {
         />
       </ScrollView>
     </ScreenBackground>
-  );
-}
-
-function MetaBlock({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.metaBlock}>
-      <Text style={styles.metaValue}>{value}</Text>
-      <Text style={styles.metaLabel}>{label}</Text>
-    </View>
   );
 }
 
@@ -106,9 +97,7 @@ const styles = StyleSheet.create({
   title: { fontFamily: fonts.display, fontSize: 22, color: colors.white },
   description: { fontFamily: fonts.body, fontSize: 13, color: colors.slate, lineHeight: 19 },
   metaGrid: { flexDirection: "row", justifyContent: "space-between" },
-  metaBlock: { alignItems: "center", flex: 1 },
-  metaValue: { fontFamily: fonts.display, fontSize: 16, color: colors.neon[300] },
-  metaLabel: { fontFamily: fonts.body, fontSize: 11, color: colors.slate, marginTop: 2 },
+  metaBlock: { flex: 1 },
   rewardsPanel: { padding: 16, gap: 8 },
   rewardsTitle: { fontFamily: fonts.bodySemibold, fontSize: 12, color: colors.gold[200], textTransform: "uppercase", letterSpacing: 0.6 },
   rewardRow: { flexDirection: "row", justifyContent: "space-between" },

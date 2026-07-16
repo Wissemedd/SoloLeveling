@@ -5,20 +5,12 @@ import { ScreenBackground, GlassPanel, SectionHeader, Chip } from "@/design-syst
 import { colors, fonts } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useInventoryStore } from "@/features/inventory/store/inventoryStore";
-import type { ItemRarity } from "@/features/inventory/types";
-import type { RarityTier } from "@/design-system/theme";
+import { chipTierForItemRarity } from "@/features/inventory/engine/rarityDisplay";
 import { getShopCatalog, purchaseItem } from "../engine/shopEngine";
 
-const CHIP_TIER_BY_ITEM_RARITY: Record<ItemRarity, RarityTier> = {
-  common: "common",
-  uncommon: "common",
-  rare: "rare",
-  epic: "epic",
-  legendary: "legendary",
-  mythic: "legendary",
-  unique: "legendary",
-  divine: "legendary",
-};
+// The catalog is static content — computed once at module load rather than
+// re-filtered on every render (getShopCatalog() derives it from item data).
+const SHOP_CATALOG = getShopCatalog();
 
 export function ShopScreen() {
   const gold = usePlayerStore((s) => s.gold);
@@ -26,7 +18,7 @@ export function ShopScreen() {
   const addItem = useInventoryStore((s) => s.addItem);
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  const catalog = getShopCatalog();
+  const catalog = SHOP_CATALOG;
 
   const handleBuy = (defId: string) => {
     const def = catalog.find((i) => i.id === defId);
@@ -52,7 +44,7 @@ export function ShopScreen() {
             <View style={styles.rowText}>
               <View style={styles.rowTitleLine}>
                 <Text style={styles.rowTitle}>{def.name}</Text>
-                <Chip label={def.rarity} tier={CHIP_TIER_BY_ITEM_RARITY[def.rarity]} />
+                <Chip label={def.rarity} tier={chipTierForItemRarity(def.rarity)} />
               </View>
               <Text style={styles.rowDescription}>{def.description}</Text>
             </View>

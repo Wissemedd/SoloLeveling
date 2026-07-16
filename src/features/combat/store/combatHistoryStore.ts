@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { appStorage } from "@/lib/storage/storage";
+import { generateId } from "@/lib/utils/id";
 import type { GateRank } from "@/features/dungeons/types";
 
 export type CombatHistoryEntry = {
@@ -28,7 +29,7 @@ export const useCombatHistoryStore = create<CombatHistoryStore>()(
     (set, get) => ({
       entries: [],
       addEntry: (entry) => {
-        const full: CombatHistoryEntry = { ...entry, id: `run-${Date.now()}`, completedAt: new Date().toISOString() };
+        const full: CombatHistoryEntry = { ...entry, id: generateId("run"), completedAt: new Date().toISOString() };
         set({ entries: [full, ...get().entries].slice(0, HISTORY_LIMIT) });
         return full;
       },

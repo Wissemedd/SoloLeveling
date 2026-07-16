@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { ScreenBackground, GlassPanel, GlowButton, StatBar, Chip } from "@/design-system/components";
+import { ScreenBackground, GlassPanel, GlowButton, StatBar, Chip, InfoRow } from "@/design-system/components";
 import { colors, fonts, rankColors, RarityTier } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useLifetimeStatsStore } from "@/features/player/store/lifetimeStatsStore";
@@ -23,19 +23,19 @@ import { ClassBadge } from "../components/ClassBadge";
 import type { ClassNode } from "../types";
 
 const METRIC_LABELS: Record<AchievementMetric, string> = {
-  totalWorkouts: "Séances complétées",
-  totalPushups: "Pompes cumulées",
-  totalDistanceKm: "Kilomètres parcourus",
-  longestStreak: "Plus longue série (jours)",
-  totalCaloriesBurned: "Calories brûlées",
-  level: "Niveau",
-  morningWorkouts: "Séances avant 7h",
-  nightWorkouts: "Séances après 22h",
-  totalSteps: "Pas cumulés",
-  totalDungeonsCleared: "Portes refermées",
-  totalMonstersDefeated: "Monstres vaincus",
-  totalBossesDefeated: "Boss vaincus",
-  totalItemsCrafted: "Objets forgés",
+  totalWorkouts: "Workouts completed",
+  totalPushups: "Lifetime push-ups",
+  totalDistanceKm: "Kilometers covered",
+  longestStreak: "Longest streak (days)",
+  totalCaloriesBurned: "Calories burned",
+  level: "Level",
+  morningWorkouts: "Workouts before 7am",
+  nightWorkouts: "Workouts after 10pm",
+  totalSteps: "Lifetime steps",
+  totalDungeonsCleared: "Gates cleared",
+  totalMonstersDefeated: "Monsters defeated",
+  totalBossesDefeated: "Bosses defeated",
+  totalItemsCrafted: "Items forged",
 };
 
 const RANK_TIER: Record<HunterRank, RarityTier> = {
@@ -63,9 +63,12 @@ export function ClassEvolutionScreen() {
   );
   const ctx = useMemo<ClassEvalContext>(() => ({ level, stats, lifetimeStats }), [level, stats, lifetimeStats]);
 
-  const currentNode = currentNodeId ? getNode(currentNodeId) : undefined;
-  const path = currentNodeId ? getPath(currentNodeId) : [];
-  const candidates = currentNodeId ? getNextCandidates(currentNodeId, chosenBranch) : [];
+  const currentNode = useMemo(() => (currentNodeId ? getNode(currentNodeId) : undefined), [currentNodeId]);
+  const path = useMemo(() => (currentNodeId ? getPath(currentNodeId) : []), [currentNodeId]);
+  const candidates = useMemo(
+    () => (currentNodeId ? getNextCandidates(currentNodeId, chosenBranch) : []),
+    [currentNodeId, chosenBranch],
+  );
 
   const handleEvolve = useCallback(
     (node: ClassNode) => {
@@ -79,7 +82,7 @@ export function ClassEvolutionScreen() {
     return (
       <ScreenBackground accent="arcane">
         <View style={styles.emptyWrap}>
-          <Text style={styles.emptyText}>Aucune classe active pour l'instant.</Text>
+          <Text style={styles.emptyText}>No active class yet.</Text>
         </View>
       </ScreenBackground>
     );
@@ -87,15 +90,15 @@ export function ClassEvolutionScreen() {
 
   const sectionLabel =
     candidates.length === 0
-      ? "Classe finale atteinte"
+      ? "Final class reached"
       : candidates.length > 1
-        ? "Choisis ta spécialisation"
-        : "Prochaine évolution";
+        ? "Choose your specialization"
+        : "Next evolution";
 
   return (
     <ScreenBackground accent="arcane" particles>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Chip label={`Rang ${currentNode.rank}`} tier={RANK_TIER[currentNode.rank]} />
+        <Chip label={`Rank ${currentNode.rank}`} tier={RANK_TIER[currentNode.rank]} />
 
         <View style={styles.heroWrap}>
           <ClassBadge node={currentNode} size={88} />
@@ -103,7 +106,7 @@ export function ClassEvolutionScreen() {
         <Text style={styles.tagline}>{currentNode.tagline}</Text>
 
         <GlassPanel glow="arcane" style={styles.panel}>
-          <Text style={styles.panelTitle}>Parcours</Text>
+          <Text style={styles.panelTitle}>Path</Text>
           <View style={styles.pathRow}>
             {path.map((node, idx) => (
               <View key={node.id} style={styles.pathItem}>
@@ -122,7 +125,7 @@ export function ClassEvolutionScreen() {
         <Text style={styles.sectionLabel}>{sectionLabel}</Text>
 
         {candidates.length === 0 ? (
-          <Text style={styles.peakText}>Cette voie a atteint son apogée. Une légende s'est achevée.</Text>
+          <Text style={styles.peakText}>This path has reached its peak. A legend has been completed.</Text>
         ) : (
           candidates.map((node) => (
             <EvolutionCard key={node.id} node={node} ctx={ctx} onConfirm={() => handleEvolve(node)} />
@@ -152,14 +155,14 @@ function EvolutionCard({
 
       {req ? (
         <View style={styles.reqList}>
-          <RequirementRow
-            label={`Niveau ${req.minLevel}`}
+          <InfoRow
+            label={`Level ${req.minLevel}`}
             met={ctx.level >= req.minLevel}
-            detail={`${ctx.level}/${req.minLevel}`}
+            value={`${ctx.level}/${req.minLevel}`}
           />
           {req.dominantStats && req.dominantStats.length > 0 ? (
-            <RequirementRow
-              label={`Stat dominante : ${req.dominantStats.map((k) => RPG_STAT_LABELS[k]).join(" ou ")}`}
+            <InfoRow
+              label={`Dominant stat: ${req.dominantStats.map((k) => RPG_STAT_LABELS[k]).join(" or ")}`}
               met={req.dominantStats.some((k) => top.includes(k))}
             />
           ) : null}
@@ -177,27 +180,13 @@ function EvolutionCard({
       ) : null}
 
       <GlowButton
-        label={eligible ? `Devenir ${node.name}` : "Conditions non remplies"}
+        label={eligible ? `Become ${node.name}` : "Requirements not met"}
         variant={eligible ? "gold" : "ghost"}
         disabled={!eligible}
         onPress={onConfirm}
         style={styles.cta}
       />
     </GlassPanel>
-  );
-}
-
-function RequirementRow({ label, met, detail }: { label: string; met: boolean; detail?: string }) {
-  return (
-    <View style={styles.reqRow}>
-      <Ionicons
-        name={met ? "checkmark-circle" : "ellipse-outline"}
-        size={14}
-        color={met ? colors.neon[300] : colors.slate}
-      />
-      <Text style={[styles.reqLabel, met && styles.reqLabelMet]}>{label}</Text>
-      {detail ? <Text style={styles.reqDetail}>{detail}</Text> : null}
-    </View>
   );
 }
 
@@ -229,10 +218,6 @@ const styles = StyleSheet.create({
   peakText: { fontFamily: fonts.body, fontSize: 13, color: colors.slate },
   card: { padding: 16, gap: 12 },
   reqList: { gap: 6 },
-  reqRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  reqLabel: { fontFamily: fonts.body, fontSize: 12, color: colors.slate, flex: 1 },
-  reqLabelMet: { color: colors.white },
-  reqDetail: { fontFamily: fonts.bodyMedium, fontSize: 11, color: colors.slate },
   metricRow: { marginTop: 2 },
   cta: { marginTop: 4 },
 });

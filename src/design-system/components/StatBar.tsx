@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from "react-native-reanimated";
 import { colors, fonts, radii } from "../theme";
+import { clamp01 } from "@/lib/utils/math";
 
 type Props = {
   label: string;
@@ -23,7 +24,7 @@ const GRADIENTS: Record<NonNullable<Props["accent"]>, [string, string]> = {
 /** Animated horizontal gauge — shared by XP, RPG stats, and boss health. */
 export function StatBar({ label, value, max, accent = "neon", showValue = true, height = 10 }: Props) {
   const pct = useSharedValue(0);
-  const target = max > 0 ? Math.min(1, Math.max(0, value / max)) : 0;
+  const target = max > 0 ? clamp01(value / max) : 0;
 
   useEffect(() => {
     pct.value = withTiming(target, { duration: 700, easing: Easing.out(Easing.cubic) });

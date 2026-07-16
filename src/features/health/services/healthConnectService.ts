@@ -1,4 +1,5 @@
 import { Platform } from "react-native";
+import { logWarning } from "@/lib/logger";
 
 export type HealthConnectAvailability =
   | "available" // Health Connect is installed and ready
@@ -40,34 +41,49 @@ export async function checkAvailability(): Promise<HealthConnectAvailability> {
 export async function requestStepsPermission(): Promise<boolean> {
   const hc = await loadNativeModule();
   if (!hc) return false;
-  await hc.initialize();
-  const granted = await hc.requestPermission([{ accessType: "read", recordType: "Steps" }]);
-  return granted.some((p) => "recordType" in p && p.recordType === "Steps");
+  try {
+    await hc.initialize();
+    const granted = await hc.requestPermission([{ accessType: "read", recordType: "Steps" }]);
+    return granted.some((p) => "recordType" in p && p.recordType === "Steps");
+  } catch (error) {
+    logWarning("healthConnectService.requestStepsPermission", error);
+    return false;
+  }
 }
 
 export async function hasStepsPermission(): Promise<boolean> {
   const hc = await loadNativeModule();
   if (!hc) return false;
-  await hc.initialize();
-  const granted = await hc.getGrantedPermissions();
-  return granted.some((p) => "recordType" in p && p.recordType === "Steps");
+  try {
+    await hc.initialize();
+    const granted = await hc.getGrantedPermissions();
+    return granted.some((p) => "recordType" in p && p.recordType === "Steps");
+  } catch (error) {
+    logWarning("healthConnectService.hasStepsPermission", error);
+    return false;
+  }
 }
 
 /** Total steps recorded since local midnight, aggregated across every source Health Connect knows about (including Samsung Health). */
 export async function readTodaySteps(): Promise<number> {
   const hc = await loadNativeModule();
   if (!hc) return 0;
-  const now = new Date();
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const result = await hc.aggregateRecord({
-    recordType: "Steps",
-    timeRangeFilter: {
-      operator: "between",
-      startTime: startOfDay.toISOString(),
-      endTime: now.toISOString(),
-    },
-  });
-  return result.COUNT_TOTAL ?? 0;
+  try {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const result = await hc.aggregateRecord({
+      recordType: "Steps",
+      timeRangeFilter: {
+        operator: "between",
+        startTime: startOfDay.toISOString(),
+        endTime: now.toISOString(),
+      },
+    });
+    return result.COUNT_TOTAL ?? 0;
+  } catch (error) {
+    logWarning("healthConnectService.readTodaySteps", error);
+    return 0;
+  }
 }
 
 /** Deep-links to the Health Connect app so the hunter can install/update it or manage permissions. */

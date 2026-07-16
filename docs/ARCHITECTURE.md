@@ -12,7 +12,7 @@ This is a real, runnable Expo app — not a mockup — but it is **phase one** o
 |---|---|---|
 | App shell | Expo SDK 57 (React Native 0.86, React 19) | Managed workflow |
 | Language | TypeScript, strict mode | |
-| Styling | NativeWind v4 + Tailwind | Custom theme in `tailwind.config.js` / `src/design-system/theme` |
+| Styling | `StyleSheet.create` | Theme tokens in `src/design-system/theme` |
 | Navigation | React Navigation (native-stack + bottom-tabs) | |
 | State | Zustand, one store per bounded context, `persist` + AsyncStorage | |
 | Animation | Reanimated 4, Gesture Handler | |
@@ -82,7 +82,7 @@ This composition-hook pattern (rather than stores calling each other directly) k
 
 ## Design system
 
-`tailwind.config.js` and `src/design-system/theme/colors.ts` are the same palette expressed twice (Tailwind className usage vs. raw values for SVG/Reanimated/LinearGradient) — keep them in sync if the palette changes. Palette: deep black base, dark-blue panels, electric purple (arcane) for progression/rarity, neon cyan for the primary active state, gold reserved for legendary rewards, red reserved for danger/boss/streak-at-risk.
+`src/design-system/theme/colors.ts` is the single source of truth for the palette — every screen/component styles itself with `StyleSheet.create` against these values (no NativeWind/Tailwind — it was configured early on but never adopted, and was removed to avoid confusing future contributors). Palette: deep black base, dark-blue panels, electric purple (arcane) for progression/rarity, neon cyan for the primary active state, gold reserved for legendary rewards, red reserved for danger/boss/streak-at-risk.
 
 ### Original visual motifs
 

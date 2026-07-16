@@ -2,7 +2,7 @@ import type { Region } from "../types";
 
 /**
  * The 8 regions from the design brief, declared up front so the World Map
- * is complete — only the first is playable in V1 ("réduit mais extensible").
+ * is complete — only the first is playable in V1 (reduced but extensible).
  * Unlocking the rest later is a data change (unlocked: true), not new code.
  */
 export const regions: Region[] = [

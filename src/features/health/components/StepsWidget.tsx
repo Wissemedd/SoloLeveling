@@ -6,6 +6,7 @@ import { colors, fonts } from "@/design-system/theme";
 import { useHealthStore, type HealthConnectionStatus } from "../store/healthStore";
 import { useSyncSteps } from "../hooks/useSyncSteps";
 import { stepsToDistanceKm } from "../engine/stepsEngine";
+import { logWarning } from "@/lib/logger";
 
 const DAILY_STEP_GOAL = 8000;
 
@@ -30,14 +31,14 @@ export function StepsWidget() {
   const [lastXp, setLastXp] = useState<number | null>(null);
 
   useEffect(() => {
-    refreshStatus().catch(() => {});
+    refreshStatus().catch((error) => logWarning("StepsWidget.refreshStatus", error));
   }, [refreshStatus]);
 
   useEffect(() => {
     if (status !== "connected") return;
     syncSteps()
       .then((summary) => setLastXp(summary && summary.xpEarned > 0 ? summary.xpEarned : null))
-      .catch(() => {});
+      .catch((error) => logWarning("StepsWidget.syncSteps", error));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
@@ -45,6 +46,8 @@ export function StepsWidget() {
     setBusy(true);
     try {
       await connect();
+    } catch (error) {
+      logWarning("StepsWidget.handleConnect", error);
     } finally {
       setBusy(false);
     }
@@ -56,6 +59,8 @@ export function StepsWidget() {
     try {
       const summary = await syncSteps();
       setLastXp(summary && summary.xpEarned > 0 ? summary.xpEarned : null);
+    } catch (error) {
+      logWarning("StepsWidget.handleRefresh", error);
     } finally {
       setBusy(false);
     }

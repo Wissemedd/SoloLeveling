@@ -1,3 +1,4 @@
+import { clamp01 } from "@/lib/utils/math";
 import type { HunterRank } from "../types";
 
 /** Level thresholds for the hunter rank ladder — mirrors rankColors in the theme. */
@@ -29,5 +30,5 @@ export function rankProgress(level: number) {
   const currentFloor = RANK_THRESHOLDS.find((t) => t.rank === current)!.minLevel;
   const span = upcoming.minLevel - currentFloor;
   const progress = span > 0 ? (level - currentFloor) / span : 1;
-  return { current, upcoming, progress: Math.min(1, Math.max(0, progress)) };
+  return { current, upcoming, progress: clamp01(progress) };
 }

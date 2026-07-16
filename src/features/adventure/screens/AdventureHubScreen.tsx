@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ScreenBackground, GlassPanel, SectionHeader } from "@/design-system/components";
+import { ScreenBackground, SectionHeader, MenuRow } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import type { AdventureStackParamList } from "@/app/navigation/types";
 import { usePlayerStore } from "@/features/player/store/playerStore";
@@ -21,7 +20,10 @@ export function AdventureHubScreen({ navigation }: Props) {
   const appearance = useCharacterStore((s) => s.appearance);
   const equipped = useInventoryStore((s) => s.equipped);
 
-  const equippedSlots = Object.fromEntries(EQUIPMENT_SLOT_IDS.map((slot) => [slot, !!equipped[slot]]));
+  const equippedSlots = useMemo(
+    () => Object.fromEntries(EQUIPMENT_SLOT_IDS.map((slot) => [slot, !!equipped[slot]])),
+    [equipped],
+  );
 
   return (
     <ScreenBackground accent="arcane">
@@ -37,30 +39,18 @@ export function AdventureHubScreen({ navigation }: Props) {
         </Pressable>
 
         <SectionHeader title="Adventure" />
-        <MenuRow icon="map" label="World Map" onPress={() => navigation.navigate("WorldMap")} />
-        <MenuRow icon="person" label="Character" onPress={() => navigation.navigate("Character")} />
-        <MenuRow icon="flash" label="Skills" onPress={() => navigation.navigate("Skills")} />
-        <MenuRow icon="briefcase" label="Inventory" onPress={() => navigation.navigate("Inventory")} />
-        <MenuRow icon="storefront" label="Shop" onPress={() => navigation.navigate("Shop")} />
-        <MenuRow icon="construct" label="Forge" onPress={() => navigation.navigate("Forge")} />
-        <MenuRow icon="book" label="Bestiary" onPress={() => navigation.navigate("Bestiary")} />
-        <MenuRow icon="time" label="Combat History" onPress={() => navigation.navigate("CombatHistory")} />
-        <MenuRow icon="podium" label="Leaderboard" onPress={() => navigation.navigate("Leaderboard")} />
-        <MenuRow icon="people" label="Guild" onPress={() => navigation.navigate("Guild")} />
+        <MenuRow icon="map" label="World Map" iconColor={colors.arcane[200]} onPress={() => navigation.navigate("WorldMap")} />
+        <MenuRow icon="person" label="Character" iconColor={colors.arcane[200]} onPress={() => navigation.navigate("Character")} />
+        <MenuRow icon="flash" label="Skills" iconColor={colors.arcane[200]} onPress={() => navigation.navigate("Skills")} />
+        <MenuRow icon="briefcase" label="Inventory" iconColor={colors.arcane[200]} onPress={() => navigation.navigate("Inventory")} />
+        <MenuRow icon="storefront" label="Shop" iconColor={colors.arcane[200]} onPress={() => navigation.navigate("Shop")} />
+        <MenuRow icon="construct" label="Forge" iconColor={colors.arcane[200]} onPress={() => navigation.navigate("Forge")} />
+        <MenuRow icon="book" label="Bestiary" iconColor={colors.arcane[200]} onPress={() => navigation.navigate("Bestiary")} />
+        <MenuRow icon="time" label="Combat History" iconColor={colors.arcane[200]} onPress={() => navigation.navigate("CombatHistory")} />
+        <MenuRow icon="podium" label="Leaderboard" iconColor={colors.arcane[200]} onPress={() => navigation.navigate("Leaderboard")} />
+        <MenuRow icon="people" label="Guild" iconColor={colors.arcane[200]} onPress={() => navigation.navigate("Guild")} />
       </ScrollView>
     </ScreenBackground>
-  );
-}
-
-function MenuRow({ icon, label, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void }) {
-  return (
-    <Pressable onPress={onPress}>
-      <GlassPanel glow="none" style={styles.menuRow}>
-        <Ionicons name={icon} size={18} color={colors.arcane[200]} />
-        <Text style={styles.menuLabel}>{label}</Text>
-        <Ionicons name="chevron-forward" size={16} color={colors.slate} />
-      </GlassPanel>
-    </Pressable>
   );
 }
 
@@ -70,6 +60,4 @@ const styles = StyleSheet.create({
   headerText: { flex: 1 },
   name: { fontFamily: fonts.display, fontSize: 18, color: colors.white },
   meta: { fontFamily: fonts.bodyMedium, fontSize: 12, color: colors.slate, marginTop: 2 },
-  menuRow: { flexDirection: "row", alignItems: "center", gap: 12, padding: 14 },
-  menuLabel: { fontFamily: fonts.bodyMedium, fontSize: 14, color: colors.white, flex: 1 },
 });

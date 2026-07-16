@@ -3,14 +3,11 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ScreenBackground, GlassPanel, SectionHeader, StatBar, GlowButton } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
+import { localDateIso } from "@/lib/utils/date";
 import { activityTypes } from "../data/activityTypes";
 import { useActivityStore } from "../store/activityStore";
 import { useLogActivity } from "../hooks/useLogActivity";
 import type { ActivityTypeDef, ActivityUnit } from "../types";
-
-function localDateIso(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-}
 
 const QUICK_AMOUNTS: Record<ActivityUnit, number[]> = {
   minutes: [15, 30, 60],
@@ -23,8 +20,8 @@ export function ActivityLogScreen() {
     <ScreenBackground accent="arcane" particles={false}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <SectionHeader
-          title="Journal d'activités"
-          subtitle="Le sport reste le cœur du jeu — ceci l'étend à la lecture, aux mangas et au quotidien."
+          title="Activity Journal"
+          subtitle="Sport stays the heart of the game — this extends it to reading, manga, and everyday life."
         />
         {activityTypes.map((def) => (
           <ActivityCard key={def.id} def={def} />
@@ -35,7 +32,7 @@ export function ActivityLogScreen() {
 }
 
 function ActivityCard({ def }: { def: ActivityTypeDef }) {
-  const today = localDateIso(new Date());
+  const today = localDateIso();
   const loggedToday = useActivityStore((s) => s.loggedToday(today, def.id));
   const logActivity = useLogActivity();
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -43,7 +40,7 @@ function ActivityCard({ def }: { def: ActivityTypeDef }) {
   const handleLog = (amount: number) => {
     const result = logActivity(def.id, amount);
     if (!result || result.acceptedUnits <= 0) {
-      setFeedback("Plafond journalier atteint.");
+      setFeedback("Daily cap reached.");
       return;
     }
     setFeedback(`+${result.xpEarned} XP`);
@@ -59,7 +56,7 @@ function ActivityCard({ def }: { def: ActivityTypeDef }) {
         {feedback ? <Text style={styles.feedback}>{feedback}</Text> : null}
       </View>
       <Text style={styles.cardDescription}>{def.description}</Text>
-      <StatBar label="Aujourd'hui" value={Math.min(loggedToday, def.dailyUnitCap)} max={def.dailyUnitCap} accent="arcane" />
+      <StatBar label="Today" value={Math.min(loggedToday, def.dailyUnitCap)} max={def.dailyUnitCap} accent="arcane" />
       <View style={styles.quickRow}>
         {QUICK_AMOUNTS[def.unit].map((amount) => (
           <GlowButton

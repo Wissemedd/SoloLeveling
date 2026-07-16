@@ -54,7 +54,7 @@ export const branchSkillSeeds: BranchSkillSeed[] = [
     passive: { name: "Aura of Protection", description: "A faint light that turns aside the killing blow.", icon: "shield", baseBonuses: { defense: 6, dodgeChance: 0.02 } },
   },
 
-  // Phantom — Voie de l'Agilité
+  // Phantom — Path of Agility
   {
     archetype: "phantom",
     branch: null,

@@ -1,18 +1,15 @@
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useLifetimeStatsStore } from "@/features/player/store/lifetimeStatsStore";
 import { useMissionStore } from "@/features/missions/store/missionStore";
-import { useAchievementStore } from "@/features/achievements/store/achievementStore";
-import { deriveLifetimeStats } from "@/features/achievements/engine/deriveLifetimeStats";
+import { useEvaluateProgressionRewards } from "@/features/achievements/hooks/useEvaluateProgressionRewards";
 import type { Achievement } from "@/features/achievements/types";
 import type { XpSource } from "@/features/player/types";
+import { localDateIso } from "@/lib/utils/date";
+import { generateId } from "@/lib/utils/id";
 import { getActivityType } from "../data/activityTypes";
 import { resolveActivityLog } from "../engine/activityEngine";
 import { useActivityStore, type ActivityLogEntry } from "../store/activityStore";
 import type { ActivityTypeId } from "../types";
-
-function localDateIso(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-}
 
 export type LogActivitySummary = {
   acceptedUnits: number;
@@ -33,7 +30,7 @@ export function useLogActivity() {
   const applyStatRewards = usePlayerStore((s) => s.applyStatRewards);
   const recordLifetime = useLifetimeStatsStore((s) => s.record);
   const incrementMissionProgress = useMissionStore((s) => s.incrementProgress);
-  const evaluateAchievements = useAchievementStore((s) => s.evaluate);
+  const evaluateProgressionRewards = useEvaluateProgressionRewards();
   const loggedToday = useActivityStore((s) => s.loggedToday);
   const recordLog = useActivityStore((s) => s.recordLog);
 
@@ -41,7 +38,7 @@ export function useLogActivity() {
     const def = getActivityType(activityId);
     if (!def) return null;
 
-    const date = localDateIso(new Date());
+    const date = localDateIso();
     const alreadyLoggedToday = loggedToday(date, activityId);
     const result = resolveActivityLog(def, requestedUnits, alreadyLoggedToday);
 
@@ -53,7 +50,7 @@ export function useLogActivity() {
     if (Object.keys(result.statGains).length > 0) applyStatRewards(result.statGains);
 
     const entry: ActivityLogEntry = {
-      id: `${activityId}-${Date.now()}`,
+      id: generateId(activityId),
       activityId,
       units: result.acceptedUnits,
       loggedAt: new Date().toISOString(),
@@ -63,9 +60,7 @@ export function useLogActivity() {
 
     if (def.missionMetric) incrementMissionProgress(def.missionMetric, result.acceptedUnits);
 
-    const { level, streak } = usePlayerStore.getState();
-    const { counters } = useLifetimeStatsStore.getState();
-    const newlyUnlockedAchievements = evaluateAchievements(deriveLifetimeStats(counters, level, streak.longest));
+    const newlyUnlockedAchievements = evaluateProgressionRewards();
 
     return {
       acceptedUnits: result.acceptedUnits,

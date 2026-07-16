@@ -5,21 +5,9 @@ import { ScreenBackground, GlassPanel, SectionHeader, Chip, GlowButton } from "@
 import { colors, fonts } from "@/design-system/theme";
 import type { AdventureStackParamList } from "@/app/navigation/types";
 import { getItemDefinition } from "@/features/inventory/data/items";
-import type { ItemRarity } from "@/features/inventory/types";
-import type { RarityTier } from "@/design-system/theme";
+import { chipTierForItemRarity } from "@/features/inventory/engine/rarityDisplay";
 
 type Props = NativeStackScreenProps<AdventureStackParamList, "CombatResults">;
-
-const CHIP_TIER_BY_ITEM_RARITY: Record<ItemRarity, RarityTier> = {
-  common: "common",
-  uncommon: "common",
-  rare: "rare",
-  epic: "epic",
-  legendary: "legendary",
-  mythic: "legendary",
-  unique: "legendary",
-  divine: "legendary",
-};
 
 export function CombatResultsScreen({ route, navigation }: Props) {
   const { summary } = route.params;
@@ -48,7 +36,7 @@ export function CombatResultsScreen({ route, navigation }: Props) {
             <View style={styles.itemGrid}>
               {summary.itemIdsEarned.map((itemId, i) => {
                 const def = getItemDefinition(itemId);
-                return def ? <Chip key={`${itemId}-${i}`} label={def.name} tier={CHIP_TIER_BY_ITEM_RARITY[def.rarity]} /> : null;
+                return def ? <Chip key={`${itemId}-${i}`} label={def.name} tier={chipTierForItemRarity(def.rarity)} /> : null;
               })}
             </View>
           </>

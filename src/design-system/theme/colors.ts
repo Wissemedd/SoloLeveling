@@ -1,7 +1,7 @@
 /**
- * Single source of truth for the palette also declared in tailwind.config.js.
- * Anything that can't consume a Tailwind className (SVG props, Reanimated
- * interpolateColor, LinearGradient stops) reads from here instead.
+ * Single source of truth for the palette — every screen/component reads
+ * colors from here (StyleSheet, SVG props, Reanimated interpolateColor,
+ * LinearGradient stops all consume the same values).
  */
 export const colors = {
   void: {

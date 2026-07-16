@@ -74,7 +74,7 @@ describe("getPath / getChildren", () => {
   it("walks root-to-current for a deep node", () => {
     const leaf = classTree.find((n) => n.id === "vanguard.chevalier.s")!;
     const path = getPath(leaf.id);
-    expect(path.map((n) => n.name)).toEqual(["Recrue", "Guerrier", "Chevalier", "Dragon Knight", "Dragon Slayer", "Dragon Monarch"]);
+    expect(path.map((n) => n.name)).toEqual(["Recruit", "Warrior", "Knight", "Dragon Knight", "Dragon Slayer", "Dragon Monarch"]);
   });
 
   it("returns no children for a max-tier leaf", () => {

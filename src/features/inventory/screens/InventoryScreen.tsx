@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { Pressable, SectionList, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ScreenBackground, GlassPanel, SectionHeader, Chip } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
@@ -7,19 +7,8 @@ import { usePlayerStore } from "@/features/player/store/playerStore";
 import { getItemDefinition } from "../data/items";
 import { useInventoryStore } from "../store/inventoryStore";
 import { slotForCategory } from "../engine/inventoryEngine";
-import type { ItemCategory, ItemRarity } from "../types";
-import type { RarityTier } from "@/design-system/theme";
-
-const CHIP_TIER_BY_ITEM_RARITY: Record<ItemRarity, RarityTier> = {
-  common: "common",
-  uncommon: "common",
-  rare: "rare",
-  epic: "epic",
-  legendary: "legendary",
-  mythic: "legendary",
-  unique: "legendary",
-  divine: "legendary",
-};
+import { chipTierForItemRarity } from "../engine/rarityDisplay";
+import type { EquipmentSlotId, ItemCategory, ItemDefinition, InventoryItemInstance } from "../types";
 
 const CATEGORY_LABELS: Record<ItemCategory, string> = {
   weapon: "Weapons",
@@ -43,70 +32,97 @@ export function InventoryScreen() {
   const equip = useInventoryStore((s) => s.equip);
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  const grouped = useMemo(() => {
-    const groups: Partial<Record<ItemCategory, typeof owned>> = {};
+  // `owned` grows unboundedly over a save's lifetime (every Gate/workout
+  // chest appends to it) — SectionList virtualizes rendering instead of a
+  // ScrollView rendering every row up front.
+  const sections = useMemo(() => {
+    const groups: Partial<Record<ItemCategory, InventoryItemInstance[]>> = {};
     for (const instance of owned) {
       const def = getItemDefinition(instance.itemId);
       if (!def) continue;
       groups[def.category] = [...(groups[def.category] ?? []), instance];
     }
-    return groups;
+    return (Object.keys(groups) as ItemCategory[]).map((category) => ({
+      title: CATEGORY_LABELS[category],
+      data: groups[category]!,
+    }));
   }, [owned]);
 
-  const handleEquip = (instanceId: string) => {
-    const result = equip(instanceId, level);
-    setFeedback(result.ok ? "Equipped." : result.reason ?? "Can't equip that.");
-  };
+  const handleEquip = useCallback(
+    (instanceId: string) => {
+      const result = equip(instanceId, level);
+      setFeedback(result.ok ? "Equipped." : result.reason ?? "Can't equip that.");
+    },
+    [equip, level],
+  );
 
   return (
     <ScreenBackground accent="arcane" particles={false}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <SectionHeader title="Inventory" subtitle={`${owned.length} items owned`} />
-        {feedback ? <Text style={styles.feedback}>{feedback}</Text> : null}
-
-        {owned.length === 0 ? <Text style={styles.emptyText}>Clear a Gate to start earning loot.</Text> : null}
-
-        {(Object.keys(grouped) as ItemCategory[]).map((category) => (
-          <View key={category} style={styles.group}>
-            <Text style={styles.groupTitle}>{CATEGORY_LABELS[category]}</Text>
-            {grouped[category]!.map((instance) => {
-              const def = getItemDefinition(instance.itemId)!;
-              const slot = slotForCategory(def.category);
-              const isEquipped = slot ? equipped[slot] === instance.instanceId : false;
-              return (
-                <GlassPanel key={instance.instanceId} glow={isEquipped ? "arcane" : "none"} style={styles.row}>
-                  <Ionicons name={def.icon} size={18} color={isEquipped ? colors.arcane[200] : colors.slate} />
-                  <View style={styles.rowText}>
-                    <View style={styles.rowTitleLine}>
-                      <Text style={styles.rowTitle}>
-                        {def.name}
-                        {instance.upgradeLevel > 0 ? ` +${instance.upgradeLevel}` : ""}
-                        {instance.quantity > 1 ? ` ×${instance.quantity}` : ""}
-                      </Text>
-                      <Chip label={def.rarity} tier={CHIP_TIER_BY_ITEM_RARITY[def.rarity]} />
-                    </View>
-                    <Text style={styles.rowDescription}>{def.description}</Text>
-                  </View>
-                  {slot ? (
-                    <Pressable onPress={() => handleEquip(instance.instanceId)} style={styles.equipButton}>
-                      <Text style={styles.equipLabel}>{isEquipped ? "Equipped" : "Equip"}</Text>
-                    </Pressable>
-                  ) : null}
-                </GlassPanel>
-              );
-            })}
-          </View>
-        ))}
-      </ScrollView>
+      <SectionList
+        contentContainerStyle={styles.content}
+        sections={sections}
+        keyExtractor={(item) => item.instanceId}
+        stickySectionHeadersEnabled={false}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <>
+            <SectionHeader title="Inventory" subtitle={`${owned.length} items owned`} />
+            {feedback ? <Text style={styles.feedback}>{feedback}</Text> : null}
+            {owned.length === 0 ? <Text style={styles.emptyText}>Clear a Gate to start earning loot.</Text> : null}
+          </>
+        }
+        renderSectionHeader={({ section }) => <Text style={styles.groupTitle}>{section.title}</Text>}
+        renderItem={({ item }) => {
+          const def = getItemDefinition(item.itemId)!;
+          const slot = slotForCategory(def.category);
+          const isEquipped = slot ? equipped[slot] === item.instanceId : false;
+          return <InventoryRow instance={item} def={def} slot={slot} isEquipped={isEquipped} onEquip={handleEquip} />;
+        }}
+      />
     </ScreenBackground>
   );
 }
 
+const InventoryRow = React.memo(function InventoryRow({
+  instance,
+  def,
+  slot,
+  isEquipped,
+  onEquip,
+}: {
+  instance: InventoryItemInstance;
+  def: ItemDefinition;
+  slot: EquipmentSlotId | null;
+  isEquipped: boolean;
+  onEquip: (instanceId: string) => void;
+}) {
+  return (
+    <GlassPanel glow={isEquipped ? "arcane" : "none"} style={styles.row}>
+      <Ionicons name={def.icon} size={18} color={isEquipped ? colors.arcane[200] : colors.slate} />
+      <View style={styles.rowText}>
+        <View style={styles.rowTitleLine}>
+          <Text style={styles.rowTitle}>
+            {def.name}
+            {instance.upgradeLevel > 0 ? ` +${instance.upgradeLevel}` : ""}
+            {instance.quantity > 1 ? ` ×${instance.quantity}` : ""}
+          </Text>
+          <Chip label={def.rarity} tier={chipTierForItemRarity(def.rarity)} />
+        </View>
+        <Text style={styles.rowDescription}>{def.description}</Text>
+      </View>
+      {slot ? (
+        <Pressable onPress={() => onEquip(instance.instanceId)} style={styles.equipButton}>
+          <Text style={styles.equipLabel}>{isEquipped ? "Equipped" : "Equip"}</Text>
+        </Pressable>
+      ) : null}
+    </GlassPanel>
+  );
+});
+
 const styles = StyleSheet.create({
-  content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48, gap: 12 },
+  content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48, gap: 8 },
   feedback: { fontFamily: fonts.bodyMedium, fontSize: 12, color: colors.neon[300] },
   emptyText: { fontFamily: fonts.body, fontSize: 13, color: colors.slate },
-  group: { gap: 8 },
   groupTitle: { fontFamily: fonts.bodySemibold, fontSize: 12, color: colors.slate, textTransform: "uppercase", letterSpacing: 0.6 },
   row: { flexDirection: "row", alignItems: "center", gap: 12, padding: 12 },
   rowText: { flex: 1, gap: 2 },

@@ -12,6 +12,7 @@ import type { ClassArchetypeId } from "@/features/classes/types";
 import { getAvatarOptions, avatarOptions } from "../data/avatars";
 import { fitnessLevelOptions, goalOptions } from "../data/options";
 import { requestNotificationPermission, scheduleDailyGateReminder } from "@/features/notifications/engine/notificationScheduler";
+import { generateId } from "@/lib/utils/id";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "HunterCreation">;
 
@@ -63,7 +64,7 @@ export function HunterCreationScreen({ navigation }: Props) {
       return;
     }
     const profile: HunterProfile = {
-      id: `hunter-${Date.now()}`,
+      id: generateId("hunter"),
       name: name.trim(),
       avatarId,
       heightCm: Number(heightCm),

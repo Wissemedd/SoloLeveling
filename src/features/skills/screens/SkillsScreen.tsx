@@ -1,16 +1,16 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ScreenBackground, GlassPanel, SectionHeader } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import { useClassStore } from "@/features/classes/store/classStore";
-import { getNode, getPath } from "@/features/classes/engine/classEngine";
+import { getPath } from "@/features/classes/engine/classEngine";
 import { getSkillsForNode } from "../engine/skillEngine";
 import type { SkillDefinition } from "../types";
 
 export function SkillsScreen() {
   const currentNodeId = useClassStore((s) => s.currentNodeId);
-  const path = currentNodeId ? getPath(currentNodeId) : [];
+  const path = useMemo(() => (currentNodeId ? getPath(currentNodeId) : []), [currentNodeId]);
 
   return (
     <ScreenBackground accent="arcane" particles={false}>

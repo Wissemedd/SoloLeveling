@@ -2,27 +2,15 @@ import React, { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ScreenBackground, GlassPanel, SectionHeader, Chip, GlowButton } from "@/design-system/components";
+import { ScreenBackground, GlassPanel, SectionHeader, Chip, GlowButton, InfoRow } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import type { AdventureStackParamList } from "@/app/navigation/types";
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useDungeonStore } from "../store/dungeonStore";
 import { isGateExpired } from "../engine/gateEngine";
-import type { ItemRarity } from "@/features/inventory/types";
-import type { RarityTier } from "@/design-system/theme";
+import { chipTierForItemRarity } from "@/features/inventory/engine/rarityDisplay";
 
 type Props = NativeStackScreenProps<AdventureStackParamList, "GateDetail">;
-
-const CHIP_TIER_BY_ITEM_RARITY: Record<ItemRarity, RarityTier> = {
-  common: "common",
-  uncommon: "common",
-  rare: "rare",
-  epic: "epic",
-  legendary: "legendary",
-  mythic: "legendary",
-  unique: "legendary",
-  divine: "legendary",
-};
 
 export function GateDetailScreen({ route, navigation }: Props) {
   const { gateId, regionId } = route.params;
@@ -78,7 +66,7 @@ export function GateDetailScreen({ route, navigation }: Props) {
         <SectionHeader title="Possible loot" />
         <View style={styles.chipGrid}>
           {gate.lootPreview.map((entry, i) => (
-            <Chip key={i} label={`${entry.rarity} ${Math.round(entry.chance * 100)}%`} tier={CHIP_TIER_BY_ITEM_RARITY[entry.rarity]} />
+            <Chip key={i} label={`${entry.rarity} ${Math.round(entry.chance * 100)}%`} tier={chipTierForItemRarity(entry.rarity)} />
           ))}
         </View>
 
@@ -95,24 +83,12 @@ export function GateDetailScreen({ route, navigation }: Props) {
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.infoRow}>
-      <Text style={styles.infoLabel}>{label}</Text>
-      <Text style={styles.infoValue}>{value}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 48, gap: 12 },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", padding: 24 },
   title: { fontFamily: fonts.display, fontSize: 20, color: colors.white },
   subtitle: { fontFamily: fonts.body, fontSize: 13, color: colors.slate, lineHeight: 19, marginBottom: 4 },
   panel: { padding: 16, gap: 8 },
-  infoRow: { flexDirection: "row", justifyContent: "space-between" },
-  infoLabel: { fontFamily: fonts.body, fontSize: 12, color: colors.slate },
-  infoValue: { fontFamily: fonts.bodyMedium, fontSize: 12, color: colors.white },
   chipGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   bossRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   bossName: { fontFamily: fonts.bodySemibold, fontSize: 14, color: colors.white },

@@ -24,13 +24,17 @@ export function AchievementsScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const unlockedIds = new Set(unlocked.map((u) => u.achievementId));
-  const sorted = [...achievements].sort((a, b) => {
-    const aDone = unlockedIds.has(a.id) ? 1 : 0;
-    const bDone = unlockedIds.has(b.id) ? 1 : 0;
-    if (aDone !== bDone) return bDone - aDone;
-    return achievementProgress(stats, b) - achievementProgress(stats, a);
-  });
+  const unlockedIds = useMemo(() => new Set(unlocked.map((u) => u.achievementId)), [unlocked]);
+  const sorted = useMemo(
+    () =>
+      [...achievements].sort((a, b) => {
+        const aDone = unlockedIds.has(a.id) ? 1 : 0;
+        const bDone = unlockedIds.has(b.id) ? 1 : 0;
+        if (aDone !== bDone) return bDone - aDone;
+        return achievementProgress(stats, b) - achievementProgress(stats, a);
+      }),
+    [unlockedIds, stats],
+  );
 
   return (
     <ScreenBackground accent="arcane" particles={false}>

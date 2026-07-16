@@ -1,11 +1,8 @@
 import type { RpgStats } from "@/features/player/types";
 import { emptyCombatBonuses } from "@/features/inventory/types";
 import type { CombatBonuses } from "@/features/inventory/types";
+import { clamp01 } from "@/lib/utils/math";
 import type { CombatAttributes } from "../types";
-
-function clamp01(value: number): number {
-  return Math.max(0, Math.min(1, value));
-}
 
 /**
  * The only bridge between a hunter's real, sport-earned stats and combat.

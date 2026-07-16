@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { colors, fonts } from "../theme";
+import { clamp01 } from "@/lib/utils/math";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -34,7 +35,7 @@ export function ProgressRing({
   const animatedProgress = useSharedValue(0);
 
   useEffect(() => {
-    animatedProgress.value = withTiming(Math.min(1, Math.max(0, progress)), {
+    animatedProgress.value = withTiming(clamp01(progress), {
       duration: 800,
       easing: Easing.out(Easing.cubic),
     });

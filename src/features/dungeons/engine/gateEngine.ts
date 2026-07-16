@@ -1,6 +1,7 @@
 import type { ItemRarity } from "@/features/inventory/types";
 import { monsters } from "@/features/monsters/data/monsters";
 import { generateMonster } from "@/features/monsters/engine/monsterGenerator";
+import { shuffle } from "@/lib/utils/array";
 import type { Gate, GateRank } from "../types";
 
 // B and A are always force-included as the two featured boss gates (see
@@ -22,15 +23,6 @@ const LOOT_PREVIEW: Record<GateRank, { rarity: ItemRarity; chance: number }[]> =
 
 const REFRESH_HOURS = 6;
 const GATE_QUOTA = 5;
-
-function shuffle<T>(items: T[]): T[] {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
 
 function encounterPoolForRank(rank: GateRank) {
   return monsters.filter((m) => !m.isBoss && m.rank === rank);

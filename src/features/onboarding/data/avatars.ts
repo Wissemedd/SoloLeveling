@@ -15,17 +15,17 @@ export type AvatarOption = {
  * picked here determines which classes the hunter can grow into.
  */
 export const avatarOptions: AvatarOption[] = [
-  { id: "vanguard", className: "Recrue", pathLabel: "Voie de la Force", icon: "shield", color: "#9D4EFF" },
-  { id: "phantom", className: "Éclaireur", pathLabel: "Voie de l'Agilité", icon: "flash", color: "#22D9F5" },
-  { id: "priest", className: "Disciple", pathLabel: "Voie du Soutien", icon: "fitness", color: "#F5B94D" },
-  { id: "mage", className: "Apprenti", pathLabel: "Voie de la Magie", icon: "eye", color: "#B87BFF" },
+  { id: "vanguard", className: "Recruit", pathLabel: "Path of Strength", icon: "shield", color: "#9D4EFF" },
+  { id: "phantom", className: "Scout", pathLabel: "Path of Agility", icon: "flash", color: "#22D9F5" },
+  { id: "priest", className: "Disciple", pathLabel: "Path of Support", icon: "fitness", color: "#F5B94D" },
+  { id: "mage", className: "Apprentice", pathLabel: "Path of Magic", icon: "eye", color: "#B87BFF" },
 ];
 
 /** Secret legendary archetype — only revealed when the hunter's name is "Wissem". */
 export const monarchAvatarOption: AvatarOption = {
   id: "monarch",
-  className: "Ombre Éveillée",
-  pathLabel: "Voie du Monarque des Ombres",
+  className: "Awakened Shadow",
+  pathLabel: "Path of the Shadow Monarch",
   icon: "skull",
   color: "#5B1FC2",
 };

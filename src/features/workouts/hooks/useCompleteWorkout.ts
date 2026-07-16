@@ -1,8 +1,7 @@
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useLifetimeStatsStore } from "@/features/player/store/lifetimeStatsStore";
 import { useMissionStore } from "@/features/missions/store/missionStore";
-import { useAchievementStore } from "@/features/achievements/store/achievementStore";
-import { deriveLifetimeStats } from "@/features/achievements/engine/deriveLifetimeStats";
+import { useEvaluateProgressionRewards, getCurrentLifetimeStats } from "@/features/achievements/hooks/useEvaluateProgressionRewards";
 import { useRewardsStore } from "@/features/rewards/store/rewardsStore";
 import { rollChest } from "@/features/rewards/engine/lootEngine";
 import { useBossStore } from "@/features/bosses/store/bossStore";
@@ -40,7 +39,7 @@ export function useCompleteWorkout() {
   const logCompletion = useWorkoutStore((s) => s.logCompletion);
   const recordLifetime = useLifetimeStatsStore((s) => s.record);
   const incrementMissionProgress = useMissionStore((s) => s.incrementProgress);
-  const evaluateAchievements = useAchievementStore((s) => s.evaluate);
+  const evaluateProgressionRewards = useEvaluateProgressionRewards();
   const addCosmetics = useRewardsStore((s) => s.addCosmetics);
   const dealDamageFromXp = useBossStore((s) => s.dealDamageFromXp);
 
@@ -73,10 +72,8 @@ export function useCompleteWorkout() {
     addCosmetics(loot);
 
     const { level, stats } = usePlayerStore.getState();
-    const { streak } = usePlayerStore.getState();
-    const { counters } = useLifetimeStatsStore.getState();
-    const lifetimeStats = deriveLifetimeStats(counters, level, streak.longest);
-    const newlyUnlockedAchievements = evaluateAchievements(lifetimeStats);
+    const lifetimeStats = getCurrentLifetimeStats();
+    const newlyUnlockedAchievements = evaluateProgressionRewards(lifetimeStats);
 
     const { currentNodeId, chosenBranch } = useClassStore.getState();
     const eligibleEvolutions = currentNodeId

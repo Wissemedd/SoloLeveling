@@ -1,15 +1,12 @@
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useLifetimeStatsStore } from "@/features/player/store/lifetimeStatsStore";
 import { useMissionStore } from "@/features/missions/store/missionStore";
-import { useAchievementStore } from "@/features/achievements/store/achievementStore";
-import { deriveLifetimeStats } from "@/features/achievements/engine/deriveLifetimeStats";
+import { useEvaluateProgressionRewards } from "@/features/achievements/hooks/useEvaluateProgressionRewards";
+import { localDateIso } from "@/lib/utils/date";
+import { logWarning } from "@/lib/logger";
 import { useHealthStore } from "../store/healthStore";
 import { stepsToCalories, stepsToDistanceKm, stepsToStatGains, stepsToXp } from "../engine/stepsEngine";
 import type { StepsSyncSummary } from "../types";
-
-function localDateIso(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-}
 
 /**
  * Pulls today's step count from Health Connect (Samsung Health's data
@@ -29,41 +26,44 @@ export function useSyncSteps() {
   const applyStatRewards = usePlayerStore((s) => s.applyStatRewards);
   const recordLifetime = useLifetimeStatsStore((s) => s.record);
   const incrementMissionProgress = useMissionStore((s) => s.incrementProgress);
-  const evaluateAchievements = useAchievementStore((s) => s.evaluate);
+  const evaluateProgressionRewards = useEvaluateProgressionRewards();
 
   return async function syncSteps(): Promise<StepsSyncSummary | null> {
     if (status !== "connected") return null;
 
-    const totalStepsToday = await pullTodaySteps();
-    const date = localDateIso(new Date());
-    const alreadyCredited = creditedOn(date);
-    const newSteps = Math.max(0, totalStepsToday - alreadyCredited);
+    try {
+      const totalStepsToday = await pullTodaySteps();
+      const date = localDateIso();
+      const alreadyCredited = creditedOn(date);
+      const newSteps = Math.max(0, totalStepsToday - alreadyCredited);
 
-    if (newSteps === 0) {
-      return { newSteps: 0, totalStepsToday, xpEarned: 0, distanceKm: 0, caloriesBurned: 0, newlyUnlockedAchievements: [] };
+      if (newSteps === 0) {
+        return { newSteps: 0, totalStepsToday, xpEarned: 0, distanceKm: 0, caloriesBurned: 0, newlyUnlockedAchievements: [] };
+      }
+
+      const distanceKm = stepsToDistanceKm(newSteps);
+      const caloriesBurned = stepsToCalories(newSteps);
+      const xpEarned = stepsToXp(newSteps);
+      const statGains = stepsToStatGains(newSteps);
+
+      grantXpToPlayer(xpEarned, "walking");
+      if (Object.keys(statGains).length > 0) applyStatRewards(statGains);
+
+      recordLifetime({
+        totalDistanceKm: distanceKm,
+        totalCaloriesBurned: caloriesBurned,
+        totalSteps: newSteps,
+      });
+
+      incrementMissionProgress("distance_km", distanceKm);
+      markCredited(date, totalStepsToday);
+
+      const newlyUnlockedAchievements = evaluateProgressionRewards();
+
+      return { newSteps, totalStepsToday, xpEarned, distanceKm, caloriesBurned, newlyUnlockedAchievements };
+    } catch (error) {
+      logWarning("useSyncSteps", error);
+      return null;
     }
-
-    const distanceKm = stepsToDistanceKm(newSteps);
-    const caloriesBurned = stepsToCalories(newSteps);
-    const xpEarned = stepsToXp(newSteps);
-    const statGains = stepsToStatGains(newSteps);
-
-    grantXpToPlayer(xpEarned, "walking");
-    if (Object.keys(statGains).length > 0) applyStatRewards(statGains);
-
-    recordLifetime({
-      totalDistanceKm: distanceKm,
-      totalCaloriesBurned: caloriesBurned,
-      totalSteps: newSteps,
-    });
-
-    incrementMissionProgress("distance_km", distanceKm);
-    markCredited(date, totalStepsToday);
-
-    const { level, streak } = usePlayerStore.getState();
-    const { counters } = useLifetimeStatsStore.getState();
-    const newlyUnlockedAchievements = evaluateAchievements(deriveLifetimeStats(counters, level, streak.longest));
-
-    return { newSteps, totalStepsToday, xpEarned, distanceKm, caloriesBurned, newlyUnlockedAchievements };
   };
 }

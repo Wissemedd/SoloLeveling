@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { ScreenBackground, GlassPanel, SectionHeader, GlowButton } from "@/design-system/components";
+import { ScreenBackground, GlassPanel, SectionHeader, GlowButton, StatTile } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useInventoryStore } from "@/features/inventory/store/inventoryStore";
@@ -60,11 +60,11 @@ export function CharacterScreen() {
         <SectionHeader title="Combat Power" subtitle="From equipped gear only — never from your real stats." />
         <GlassPanel glow="arcane" style={styles.panel}>
           <View style={styles.bonusGrid}>
-            <BonusTile label="Attack" value={bonuses.attackPower} />
-            <BonusTile label="Defense" value={bonuses.defense} />
-            <BonusTile label="Crit" value={`${Math.round(bonuses.critChance * 100)}%`} />
-            <BonusTile label="Dodge" value={`${Math.round(bonuses.dodgeChance * 100)}%`} />
-            <BonusTile label="Elemental" value={bonuses.elementalPower} />
+            <StatTile label="Attack" value={bonuses.attackPower} style={styles.bonusTile} />
+            <StatTile label="Defense" value={bonuses.defense} style={styles.bonusTile} />
+            <StatTile label="Crit" value={`${Math.round(bonuses.critChance * 100)}%`} style={styles.bonusTile} />
+            <StatTile label="Dodge" value={`${Math.round(bonuses.dodgeChance * 100)}%`} style={styles.bonusTile} />
+            <StatTile label="Elemental" value={bonuses.elementalPower} style={styles.bonusTile} />
           </View>
         </GlassPanel>
 
@@ -99,24 +99,13 @@ export function CharacterScreen() {
   );
 }
 
-function BonusTile({ label, value }: { label: string; value: number | string }) {
-  return (
-    <View style={styles.bonusTile}>
-      <Text style={styles.bonusValue}>{value}</Text>
-      <Text style={styles.bonusLabel}>{label}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48, gap: 12 },
   previewWrap: { alignItems: "center", paddingVertical: 8, gap: 6 },
   name: { fontFamily: fonts.display, fontSize: 18, color: colors.white },
   panel: { padding: 16 },
   bonusGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
-  bonusTile: { minWidth: 64, alignItems: "center" },
-  bonusValue: { fontFamily: fonts.display, fontSize: 16, color: colors.white },
-  bonusLabel: { fontFamily: fonts.body, fontSize: 11, color: colors.slate },
+  bonusTile: { minWidth: 64 },
   slotRow: { flexDirection: "row", alignItems: "center", gap: 12, padding: 14, marginBottom: 8 },
   slotTextCol: { flex: 1 },
   slotLabel: { fontFamily: fonts.body, fontSize: 11, color: colors.slate },

@@ -1,4 +1,3 @@
-import "./src/design-system/theme/global.css";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";

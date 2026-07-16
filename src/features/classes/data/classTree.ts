@@ -88,14 +88,14 @@ function trunk(
 }
 
 // ---------------------------------------------------------------------------
-// Vanguard — Voie de la Force (strength-led)
+// Vanguard — Path of Strength (strength-led)
 // ---------------------------------------------------------------------------
 
 const vanguardTrunk = trunk(
   "vanguard",
   "shield",
-  { name: "Recrue", tagline: "Le premier pas d'un long entraînement." },
-  { name: "Guerrier", tagline: "Le corps se forge dans l'effort répété." },
+  { name: "Recruit", tagline: "The first step of a long training." },
+  { name: "Warrior", tagline: "The body is forged through repeated effort." },
 );
 const vanguardTrunkD = vanguardTrunk[1].id;
 
@@ -107,10 +107,10 @@ const vanguardBerserker = buildBranch(
   ["strength"],
   "totalPushups",
   [
-    { rank: "C", name: "Berserker", tagline: "La rage devient une arme.", minLevel: 20, metricThreshold: 100 },
-    { rank: "B", name: "Roi Berserker", tagline: "Aucune charge ne le fait plier.", minLevel: 35, metricThreshold: 1000 },
-    { rank: "A", name: "Titan", tagline: "Sa force seule fissure la pierre.", minLevel: 50, metricThreshold: 10000 },
-    { rank: "S", name: "Infinity Warrior", tagline: "Une puissance qui ne connaît plus de limite.", minLevel: 70, metricThreshold: 50000 },
+    { rank: "C", name: "Berserker", tagline: "Rage becomes a weapon.", minLevel: 20, metricThreshold: 100 },
+    { rank: "B", name: "Berserker King", tagline: "No charge makes him yield.", minLevel: 35, metricThreshold: 1000 },
+    { rank: "A", name: "Titan", tagline: "His strength alone cracks stone.", minLevel: 50, metricThreshold: 10000 },
+    { rank: "S", name: "Infinity Warrior", tagline: "A power that knows no limit anymore.", minLevel: 70, metricThreshold: 50000 },
   ],
 );
 
@@ -122,10 +122,10 @@ const vanguardChevalier = buildBranch(
   ["strength", "vitality"],
   "totalWorkouts",
   [
-    { rank: "C", name: "Chevalier", tagline: "Une garde qui ne cède jamais.", minLevel: 20, metricThreshold: 10 },
-    { rank: "B", name: "Dragon Knight", tagline: "L'armure a pris l'écaille du dragon.", minLevel: 35, metricThreshold: 50 },
-    { rank: "A", name: "Dragon Slayer", tagline: "Il a terrassé ce que d'autres fuient.", minLevel: 50, metricThreshold: 100 },
-    { rank: "S", name: "Dragon Monarch", tagline: "Le dragon ne le combat plus — il le sert.", minLevel: 70, metricThreshold: 500 },
+    { rank: "C", name: "Knight", tagline: "A guard that never yields.", minLevel: 20, metricThreshold: 10 },
+    { rank: "B", name: "Dragon Knight", tagline: "The armor has taken on the dragon's scale.", minLevel: 35, metricThreshold: 50 },
+    { rank: "A", name: "Dragon Slayer", tagline: "He has felled what others flee.", minLevel: 50, metricThreshold: 100 },
+    { rank: "S", name: "Dragon Monarch", tagline: "The dragon no longer fights him — it serves him.", minLevel: 70, metricThreshold: 500 },
   ],
 );
 
@@ -137,22 +137,22 @@ const vanguardPaladin = buildBranch(
   ["discipline"],
   "morningWorkouts",
   [
-    { rank: "C", name: "Paladin", tagline: "La discipline avant l'aube.", minLevel: 20, metricThreshold: 5 },
-    { rank: "B", name: "Templier", tagline: "Un serment tenu chaque matin.", minLevel: 35, metricThreshold: 25 },
-    { rank: "A", name: "Saint", tagline: "Sa volonté éclaire ceux qui doutent.", minLevel: 50, metricThreshold: 60 },
-    { rank: "S", name: "Light Bringer", tagline: "Là où il passe, la nuit recule.", minLevel: 70, metricThreshold: 100 },
+    { rank: "C", name: "Paladin", tagline: "Discipline before dawn.", minLevel: 20, metricThreshold: 5 },
+    { rank: "B", name: "Templar", tagline: "A vow kept every morning.", minLevel: 35, metricThreshold: 25 },
+    { rank: "A", name: "Saint", tagline: "His will lights the way for those who doubt.", minLevel: 50, metricThreshold: 60 },
+    { rank: "S", name: "Light Bringer", tagline: "Wherever he walks, the night retreats.", minLevel: 70, metricThreshold: 100 },
   ],
 );
 
 // ---------------------------------------------------------------------------
-// Phantom — Voie de l'Agilité (agility-led)
+// Phantom — Path of Agility (agility-led)
 // ---------------------------------------------------------------------------
 
 const phantomTrunk = trunk(
   "phantom",
   "flash",
-  { name: "Éclaireur", tagline: "Toujours un pas devant." },
-  { name: "Voleur", tagline: "Rapide, léger, insaisissable." },
+  { name: "Scout", tagline: "Always one step ahead." },
+  { name: "Thief", tagline: "Fast, light, untouchable." },
 );
 const phantomTrunkD = phantomTrunk[1].id;
 
@@ -164,10 +164,10 @@ const phantomAssassin = buildBranch(
   ["agility"],
   "nightWorkouts",
   [
-    { rank: "C", name: "Assassin", tagline: "Il frappe avant d'être vu.", minLevel: 20, metricThreshold: 5 },
-    { rank: "B", name: "Maître Assassin", tagline: "L'ombre elle-même le suit avec retard.", minLevel: 35, metricThreshold: 25 },
-    { rank: "A", name: "Épéiste fantôme", tagline: "Une lame qu'on ne voit jamais venir.", minLevel: 50, metricThreshold: 60 },
-    { rank: "S", name: "Void Walker", tagline: "Il marche entre les instants.", minLevel: 70, metricThreshold: 100 },
+    { rank: "C", name: "Assassin", tagline: "He strikes before he's seen.", minLevel: 20, metricThreshold: 5 },
+    { rank: "B", name: "Master Assassin", tagline: "Even the shadow lags behind him.", minLevel: 35, metricThreshold: 25 },
+    { rank: "A", name: "Phantom Blade", tagline: "A blade you never see coming.", minLevel: 50, metricThreshold: 60 },
+    { rank: "S", name: "Void Walker", tagline: "He walks between moments.", minLevel: 70, metricThreshold: 100 },
   ],
 );
 
@@ -179,10 +179,10 @@ const phantomChasseur = buildBranch(
   ["agility", "endurance"],
   "totalDistanceKm",
   [
-    { rank: "C", name: "Chasseur", tagline: "Aucune piste ne lui échappe.", minLevel: 20, metricThreshold: 10 },
-    { rank: "B", name: "Ranger", tagline: "Le territoire entier est son terrain.", minLevel: 35, metricThreshold: 50 },
-    { rank: "A", name: "Maître des Bêtes", tagline: "Même les fauves reconnaissent sa foulée.", minLevel: 50, metricThreshold: 200 },
-    { rank: "S", name: "Beast Monarch", tagline: "Il ne traque plus — il règne.", minLevel: 70, metricThreshold: 500 },
+    { rank: "C", name: "Hunter", tagline: "No trail escapes him.", minLevel: 20, metricThreshold: 10 },
+    { rank: "B", name: "Ranger", tagline: "The whole territory is his ground.", minLevel: 35, metricThreshold: 50 },
+    { rank: "A", name: "Beastmaster", tagline: "Even beasts recognize his stride.", minLevel: 50, metricThreshold: 200 },
+    { rank: "S", name: "Beast Monarch", tagline: "He no longer hunts — he reigns.", minLevel: 70, metricThreshold: 500 },
   ],
 );
 
@@ -194,22 +194,22 @@ const phantomNinja = buildBranch(
   ["agility", "focus"],
   "totalSteps",
   [
-    { rank: "C", name: "Ninja", tagline: "Chaque pas est calculé.", minLevel: 20, metricThreshold: 10000 },
-    { rank: "B", name: "Lame Astrale", tagline: "Le mouvement devient tranchant.", minLevel: 35, metricThreshold: 50000 },
-    { rank: "A", name: "Maître des Ombres", tagline: "Il se déplace plus vite que le regard.", minLevel: 50, metricThreshold: 200000 },
-    { rank: "S", name: "Storm Monarch", tagline: "Une tempête qui ne laisse pas de trace.", minLevel: 70, metricThreshold: 500000 },
+    { rank: "C", name: "Ninja", tagline: "Every step is calculated.", minLevel: 20, metricThreshold: 10000 },
+    { rank: "B", name: "Astral Blade", tagline: "Movement itself becomes an edge.", minLevel: 35, metricThreshold: 50000 },
+    { rank: "A", name: "Master of Shadows", tagline: "He moves faster than the eye can follow.", minLevel: 50, metricThreshold: 200000 },
+    { rank: "S", name: "Storm Monarch", tagline: "A storm that leaves no trace.", minLevel: 70, metricThreshold: 500000 },
   ],
 );
 
 // ---------------------------------------------------------------------------
-// Mage — Voie de la Magie (focus-led)
+// Mage — Path of Magic (focus-led)
 // ---------------------------------------------------------------------------
 
 const mageTrunk = trunk(
   "mage",
   "eye",
-  { name: "Apprenti", tagline: "Le savoir commence par l'humilité." },
-  { name: "Élémentaliste", tagline: "Les éléments répondent enfin à l'appel." },
+  { name: "Apprentice", tagline: "Knowledge begins with humility." },
+  { name: "Elementalist", tagline: "The elements finally answer the call." },
 );
 const mageTrunkD = mageTrunk[1].id;
 
@@ -221,10 +221,10 @@ const mageArchimage = buildBranch(
   ["focus"],
   "totalWorkouts",
   [
-    { rank: "C", name: "Archimage", tagline: "L'esprit devient une arme précise.", minLevel: 20, metricThreshold: 10 },
-    { rank: "B", name: "Sage Arcane", tagline: "Chaque séance affine la compréhension.", minLevel: 35, metricThreshold: 50 },
-    { rank: "A", name: "Primordial Mage", tagline: "Il touche aux lois premières.", minLevel: 50, metricThreshold: 100 },
-    { rank: "S", name: "Reality Bender", tagline: "Ce qu'il imagine, il le façonne.", minLevel: 70, metricThreshold: 500 },
+    { rank: "C", name: "Archmage", tagline: "The mind becomes a precise weapon.", minLevel: 20, metricThreshold: 10 },
+    { rank: "B", name: "Arcane Sage", tagline: "Every session sharpens understanding.", minLevel: 35, metricThreshold: 50 },
+    { rank: "A", name: "Primordial Mage", tagline: "He touches the first laws of creation.", minLevel: 50, metricThreshold: 100 },
+    { rank: "S", name: "Reality Bender", tagline: "What he imagines, he shapes.", minLevel: 70, metricThreshold: 500 },
   ],
 );
 
@@ -236,10 +236,10 @@ const mageNecromancien = buildBranch(
   ["focus", "discipline"],
   "totalCaloriesBurned",
   [
-    { rank: "C", name: "Nécromancien", tagline: "Il transforme l'épuisement en pouvoir.", minLevel: 20, metricThreshold: 5000 },
-    { rank: "B", name: "Grand Nécromancien", tagline: "Rien ne se perd, tout se convertit.", minLevel: 35, metricThreshold: 50000 },
-    { rank: "A", name: "Roi des Esprits", tagline: "Une armée d'efforts passés le suit.", minLevel: 50, metricThreshold: 150000 },
-    { rank: "S", name: "Abyss Monarch", tagline: "Il a dévoré ses propres limites.", minLevel: 70, metricThreshold: 500000 },
+    { rank: "C", name: "Necromancer", tagline: "He turns exhaustion into power.", minLevel: 20, metricThreshold: 5000 },
+    { rank: "B", name: "Grand Necromancer", tagline: "Nothing is lost, everything converts.", minLevel: 35, metricThreshold: 50000 },
+    { rank: "A", name: "King of Spirits", tagline: "An army of past efforts follows him.", minLevel: 50, metricThreshold: 150000 },
+    { rank: "S", name: "Abyss Monarch", tagline: "He has devoured his own limits.", minLevel: 70, metricThreshold: 500000 },
   ],
 );
 
@@ -251,22 +251,22 @@ const mageChronomancien = buildBranch(
   ["focus", "discipline"],
   "longestStreak",
   [
-    { rank: "C", name: "Chronomancien", tagline: "Chaque jour compte, aucun n'est perdu.", minLevel: 20, metricThreshold: 7 },
-    { rank: "B", name: "Astromancien", tagline: "Sa régularité suit celle des astres.", minLevel: 35, metricThreshold: 30 },
-    { rank: "A", name: "Maître du Temps", tagline: "Le temps ne lui échappe plus jamais.", minLevel: 50, metricThreshold: 60 },
-    { rank: "S", name: "Time Weaver", tagline: "Il tisse les jours en une seule volonté.", minLevel: 70, metricThreshold: 100 },
+    { rank: "C", name: "Chronomancer", tagline: "Every day counts, none are lost.", minLevel: 20, metricThreshold: 7 },
+    { rank: "B", name: "Astromancer", tagline: "His consistency follows that of the stars.", minLevel: 35, metricThreshold: 30 },
+    { rank: "A", name: "Master of Time", tagline: "Time never escapes him anymore.", minLevel: 50, metricThreshold: 60 },
+    { rank: "S", name: "Time Weaver", tagline: "He weaves the days into a single will.", minLevel: 70, metricThreshold: 100 },
   ],
 );
 
 // ---------------------------------------------------------------------------
-// Priest — Voie du Soutien (vitality/discipline-led)
+// Priest — Path of Support (vitality/discipline-led)
 // ---------------------------------------------------------------------------
 
 const priestTrunk = trunk(
   "priest",
   "fitness",
-  { name: "Disciple", tagline: "Servir les autres commence par se forger soi-même." },
-  { name: "Clerc", tagline: "Un corps sain porte une volonté plus grande." },
+  { name: "Disciple", tagline: "Serving others begins with forging yourself." },
+  { name: "Cleric", tagline: "A healthy body carries a greater will." },
 );
 const priestTrunkD = priestTrunk[1].id;
 
@@ -278,10 +278,10 @@ const priestGuerisseur = buildBranch(
   ["vitality"],
   "totalWorkouts",
   [
-    { rank: "C", name: "Guérisseur", tagline: "Chaque effort répare autant qu'il construit.", minLevel: 20, metricThreshold: 10 },
-    { rank: "B", name: "Grand Druide", tagline: "Sa vitalité déborde sur son entourage.", minLevel: 35, metricThreshold: 50 },
-    { rank: "A", name: "Émissaire Divin", tagline: "Un souffle de vie inépuisable.", minLevel: 50, metricThreshold: 100 },
-    { rank: "S", name: "Celestial Monarch", tagline: "Sa présence seule relève les autres.", minLevel: 70, metricThreshold: 500 },
+    { rank: "C", name: "Healer", tagline: "Every effort repairs as much as it builds.", minLevel: 20, metricThreshold: 10 },
+    { rank: "B", name: "Grand Druid", tagline: "His vitality overflows onto those around him.", minLevel: 35, metricThreshold: 50 },
+    { rank: "A", name: "Divine Emissary", tagline: "An inexhaustible breath of life.", minLevel: 50, metricThreshold: 100 },
+    { rank: "S", name: "Celestial Monarch", tagline: "His presence alone lifts others up.", minLevel: 70, metricThreshold: 500 },
   ],
 );
 
@@ -293,10 +293,10 @@ const priestMoine = buildBranch(
   ["focus", "vitality"],
   "morningWorkouts",
   [
-    { rank: "C", name: "Moine", tagline: "Le calme avant l'effort, l'effort avant l'aube.", minLevel: 20, metricThreshold: 5 },
-    { rank: "B", name: "Maître du Ki", tagline: "Le souffle et le corps ne font plus qu'un.", minLevel: 35, metricThreshold: 25 },
-    { rank: "A", name: "Archonte", tagline: "Sa discipline devient un exemple.", minLevel: 50, metricThreshold: 60 },
-    { rank: "S", name: "World Guardian", tagline: "Un pilier que rien ne fait vaciller.", minLevel: 70, metricThreshold: 100 },
+    { rank: "C", name: "Monk", tagline: "Calm before effort, effort before dawn.", minLevel: 20, metricThreshold: 5 },
+    { rank: "B", name: "Master of Ki", tagline: "Breath and body become one.", minLevel: 35, metricThreshold: 25 },
+    { rank: "A", name: "Archon", tagline: "His discipline becomes an example.", minLevel: 50, metricThreshold: 60 },
+    { rank: "S", name: "World Guardian", tagline: "A pillar that nothing can shake.", minLevel: 70, metricThreshold: 100 },
   ],
 );
 
@@ -308,25 +308,25 @@ const priestExorciste = buildBranch(
   ["discipline", "vitality"],
   "totalPushups",
   [
-    { rank: "C", name: "Exorciste", tagline: "Il chasse le doute à chaque répétition.", minLevel: 20, metricThreshold: 100 },
-    { rank: "B", name: "Bourreau Sacré", tagline: "Sa rigueur ne laisse rien passer.", minLevel: 35, metricThreshold: 1000 },
-    { rank: "A", name: "Ange Gardien", tagline: "Il veille sur sa propre progression sans faillir.", minLevel: 50, metricThreshold: 10000 },
-    { rank: "S", name: "Eternal Knight", tagline: "Une garde que le temps ne lasse jamais.", minLevel: 70, metricThreshold: 50000 },
+    { rank: "C", name: "Exorcist", tagline: "He casts out doubt with every repetition.", minLevel: 20, metricThreshold: 100 },
+    { rank: "B", name: "Sacred Executioner", tagline: "His rigor lets nothing slip by.", minLevel: 35, metricThreshold: 1000 },
+    { rank: "A", name: "Guardian Angel", tagline: "He watches over his own progress without fail.", minLevel: 50, metricThreshold: 10000 },
+    { rank: "S", name: "Eternal Knight", tagline: "A vigil that time never wearies.", minLevel: 70, metricThreshold: 50000 },
   ],
 );
 
 // ---------------------------------------------------------------------------
-// Monarch — Voie du Monarque des Ombres (secret, "Wissem" only)
+// Monarch — Path of the Shadow Monarch (secret, "Wissem" only)
 // ---------------------------------------------------------------------------
 
 const monarchLine: ClassNode[] = (() => {
   const steps: (BranchStep & { id: string })[] = [
-    { id: "monarch.trunk.e", rank: "E", name: "Ombre Éveillée", tagline: "Une puissance qui ne demande qu'à s'éveiller.", minLevel: 1 },
-    { id: "monarch.trunk.d", rank: "D", name: "Chasseur d'Ombres", tagline: "Il commande déjà ce que les autres craignent.", minLevel: 10 },
-    { id: "monarch.trunk.c", rank: "C", name: "Souverain des Ombres", tagline: "Une armée silencieuse se lève derrière lui.", minLevel: 20 },
-    { id: "monarch.trunk.b", rank: "B", name: "Monarque Naissant", tagline: "Le trône des ombres l'attend.", minLevel: 35 },
-    { id: "monarch.trunk.a", rank: "A", name: "Régent des Ombres", tagline: "Il ne reste plus qu'un pas vers le sommet.", minLevel: 50 },
-    { id: "monarch.trunk.s", rank: "S", name: "Shadow Monarch", tagline: "Arise. Le seul, l'unique Monarque des Ombres.", minLevel: 70 },
+    { id: "monarch.trunk.e", rank: "E", name: "Awakened Shadow", tagline: "A power that only waits to awaken.", minLevel: 1 },
+    { id: "monarch.trunk.d", rank: "D", name: "Shadow Hunter", tagline: "He already commands what others fear.", minLevel: 10 },
+    { id: "monarch.trunk.c", rank: "C", name: "Sovereign of Shadows", tagline: "A silent army rises behind him.", minLevel: 20 },
+    { id: "monarch.trunk.b", rank: "B", name: "Rising Monarch", tagline: "The throne of shadows awaits him.", minLevel: 35 },
+    { id: "monarch.trunk.a", rank: "A", name: "Regent of Shadows", tagline: "Only one step remains to the summit.", minLevel: 50 },
+    { id: "monarch.trunk.s", rank: "S", name: "Shadow Monarch", tagline: "Arise. The one, the only Shadow Monarch.", minLevel: 70 },
   ];
 
   return steps.map((step, i) => ({
