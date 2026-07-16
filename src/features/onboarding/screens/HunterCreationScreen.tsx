@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -7,7 +7,9 @@ import { colors, fonts, radii } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import type { OnboardingStackParamList } from "@/app/navigation/types";
 import type { FitnessGoal, FitnessLevel, Gender, HunterProfile } from "@/features/player/types";
-import { avatarOptions } from "../data/avatars";
+import { useClassStore } from "@/features/classes/store/classStore";
+import type { ClassArchetypeId } from "@/features/classes/types";
+import { getAvatarOptions, avatarOptions } from "../data/avatars";
 import { fitnessLevelOptions, goalOptions } from "../data/options";
 import { requestNotificationPermission, scheduleDailyGateReminder } from "@/features/notifications/engine/notificationScheduler";
 
@@ -22,6 +24,7 @@ const GENDER_OPTIONS: { value: Gender; label: string }[] = [
 
 export function HunterCreationScreen({ navigation }: Props) {
   const createHunter = usePlayerStore((s) => s.createHunter);
+  const initClassForArchetype = useClassStore((s) => s.initForArchetype);
 
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
@@ -31,6 +34,16 @@ export function HunterCreationScreen({ navigation }: Props) {
   const [gender, setGender] = useState<Gender>("unspecified");
   const [fitnessLevel, setFitnessLevel] = useState<FitnessLevel>("beginner");
   const [goals, setGoals] = useState<FitnessGoal[]>([]);
+
+  const availableAvatars = useMemo(() => getAvatarOptions(name), [name]);
+
+  // The secret Monarch path only stays selectable while the typed name is "Wissem" —
+  // fall back to the first path if the name is edited away after picking it.
+  useEffect(() => {
+    if (avatarId === "monarch" && !availableAvatars.some((a) => a.id === "monarch")) {
+      setAvatarId(avatarOptions[0].id);
+    }
+  }, [avatarId, availableAvatars]);
 
   const toggleGoal = (goal: FitnessGoal) => {
     setGoals((prev) => (prev.includes(goal) ? prev.filter((g) => g !== goal) : [...prev, goal]));
@@ -61,6 +74,7 @@ export function HunterCreationScreen({ navigation }: Props) {
       createdAt: new Date().toISOString(),
     };
     createHunter(profile);
+    initClassForArchetype(avatarId as ClassArchetypeId);
 
     requestNotificationPermission()
       .then((granted) => {
@@ -104,10 +118,11 @@ export function HunterCreationScreen({ navigation }: Props) {
           )}
 
           {step === 1 && (
-            <StepShell title="Choose your starting class" subtitle="Purely cosmetic — every path can reach National rank.">
+            <StepShell title="Choose your starting class" subtitle="Every path grows into a full evolution tree — train differently, evolve differently.">
               <View style={styles.avatarGrid}>
-                {avatarOptions.map((a) => {
+                {availableAvatars.map((a) => {
                   const active = a.id === avatarId;
+                  const legendary = a.id === "monarch";
                   return (
                     <Pressable key={a.id} onPress={() => setAvatarId(a.id)} style={styles.avatarCell}>
                       <View
@@ -120,6 +135,7 @@ export function HunterCreationScreen({ navigation }: Props) {
                         <Ionicons name={a.icon} size={26} color={a.color} />
                       </View>
                       <Text style={[styles.avatarLabel, active && { color: colors.white }]}>{a.className}</Text>
+                      <Text style={[styles.avatarPath, legendary && { color: a.color }]}>{a.pathLabel}</Text>
                     </Pressable>
                   );
                 })}
@@ -270,9 +286,10 @@ const styles = StyleSheet.create({
   pillLabel: { fontFamily: fonts.bodyMedium, fontSize: 12, color: colors.slate },
   pillLabelActive: { color: colors.arcane[100] },
   avatarGrid: { flexDirection: "row", flexWrap: "wrap", gap: 20, justifyContent: "center", marginTop: 8 },
-  avatarCell: { alignItems: "center", gap: 8, width: 96 },
+  avatarCell: { alignItems: "center", gap: 6, width: 104 },
   avatarIconWrap: { width: 68, height: 68, borderRadius: 34, borderWidth: 2, alignItems: "center", justifyContent: "center" },
   avatarLabel: { fontFamily: fonts.bodyMedium, fontSize: 12, color: colors.slate },
+  avatarPath: { fontFamily: fonts.body, fontSize: 10, color: colors.slate, textAlign: "center" },
   optionCard: {
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",

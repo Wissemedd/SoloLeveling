@@ -6,6 +6,9 @@ import { deriveLifetimeStats } from "@/features/achievements/engine/deriveLifeti
 import { useRewardsStore } from "@/features/rewards/store/rewardsStore";
 import { rollChest } from "@/features/rewards/engine/lootEngine";
 import { useBossStore } from "@/features/bosses/store/bossStore";
+import { useClassStore } from "@/features/classes/store/classStore";
+import { getEligibleEvolutions } from "@/features/classes/engine/classEngine";
+import type { ClassNode } from "@/features/classes/types";
 import type { Achievement } from "@/features/achievements/types";
 import type { LootReward } from "@/features/rewards/types";
 import type { XpGrantResult } from "@/features/player/types";
@@ -19,6 +22,7 @@ export type CompleteWorkoutSummary = {
   goldEarned: number;
   newlyUnlockedAchievements: Achievement[];
   bossDefeated: boolean;
+  eligibleEvolutions: ClassNode[];
 };
 
 /**
@@ -68,13 +72,25 @@ export function useCompleteWorkout() {
     addGold(goldEarned);
     addCosmetics(loot);
 
-    const { level } = usePlayerStore.getState();
+    const { level, stats } = usePlayerStore.getState();
     const { streak } = usePlayerStore.getState();
     const { counters } = useLifetimeStatsStore.getState();
-    const newlyUnlockedAchievements = evaluateAchievements(
-      deriveLifetimeStats(counters, level, streak.longest),
-    );
+    const lifetimeStats = deriveLifetimeStats(counters, level, streak.longest);
+    const newlyUnlockedAchievements = evaluateAchievements(lifetimeStats);
 
-    return { sessionLog, xpResult, loot, goldEarned, newlyUnlockedAchievements, bossDefeated: defeatedJustNow };
+    const { currentNodeId, chosenBranch } = useClassStore.getState();
+    const eligibleEvolutions = currentNodeId
+      ? getEligibleEvolutions(currentNodeId, chosenBranch, { level, stats, lifetimeStats })
+      : [];
+
+    return {
+      sessionLog,
+      xpResult,
+      loot,
+      goldEarned,
+      newlyUnlockedAchievements,
+      bossDefeated: defeatedJustNow,
+      eligibleEvolutions,
+    };
   };
 }

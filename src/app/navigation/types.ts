@@ -18,12 +18,17 @@ export type WorkoutsStackParamList = {
   Results: { workoutId: string; summary: CompleteWorkoutSummary };
 };
 
+export type ProfileStackParamList = {
+  ProfileHome: undefined;
+  ClassEvolution: undefined;
+};
+
 export type MainTabParamList = {
   Home: NavigatorScreenParams<HomeStackParamList>;
   Workouts: NavigatorScreenParams<WorkoutsStackParamList>;
   Missions: undefined;
   Achievements: undefined;
-  Profile: undefined;
+  Profile: NavigatorScreenParams<ProfileStackParamList>;
 };
 
 export type RootStackParamList = {

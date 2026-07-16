@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ScreenBackground, GlassPanel, RankBadge, StatBar, SectionHeader, Chip, GateEmblem } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
@@ -9,8 +11,16 @@ import { useRewardsStore } from "@/features/rewards/store/rewardsStore";
 import { rankProgress } from "@/features/player/engine/rankEngine";
 import { powerLevel } from "@/features/player/engine/statsEngine";
 import { useHealthStore } from "@/features/health/store/healthStore";
+import { useLifetimeStatsStore } from "@/features/player/store/lifetimeStatsStore";
+import { deriveLifetimeStats } from "@/features/achievements/engine/deriveLifetimeStats";
+import { useClassStore } from "@/features/classes/store/classStore";
+import { getEligibleEvolutions, getNode } from "@/features/classes/engine/classEngine";
+import { ClassBadge } from "@/features/classes/components/ClassBadge";
+import type { ClassArchetypeId } from "@/features/classes/types";
+import type { ProfileStackParamList } from "@/app/navigation/types";
 
 export function ProfileScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
   const profile = usePlayerStore((s) => s.profile);
   const level = usePlayerStore((s) => s.level);
   const rank = usePlayerStore((s) => s.rank);
@@ -22,8 +32,28 @@ export function ProfileScreen() {
   const healthStatus = useHealthStore((s) => s.status);
   const connectHealth = useHealthStore((s) => s.connect);
   const disconnectHealth = useHealthStore((s) => s.disconnect);
+  const counters = useLifetimeStatsStore((s) => s.counters);
+  const currentClassNodeId = useClassStore((s) => s.currentNodeId);
+  const chosenBranch = useClassStore((s) => s.chosenBranch);
+  const initClassForArchetype = useClassStore((s) => s.initForArchetype);
+
+  // Backfills the class tree for hunters created before this feature shipped.
+  useEffect(() => {
+    if (!currentClassNodeId && profile?.avatarId) {
+      initClassForArchetype(profile.avatarId as ClassArchetypeId);
+    }
+  }, [currentClassNodeId, profile?.avatarId, initClassForArchetype]);
 
   const { upcoming, progress } = rankProgress(level);
+  const currentClassNode = currentClassNodeId ? getNode(currentClassNodeId) : undefined;
+  const eligibleEvolutions = useMemo(() => {
+    if (!currentClassNodeId) return [];
+    return getEligibleEvolutions(currentClassNodeId, chosenBranch, {
+      level,
+      stats,
+      lifetimeStats: deriveLifetimeStats(counters, level, longestStreak),
+    });
+  }, [currentClassNodeId, chosenBranch, level, stats, counters, longestStreak]);
 
   const healthHint =
     healthStatus === "connected"
@@ -65,6 +95,21 @@ export function ProfileScreen() {
             <Text style={styles.maxRank}>Peak rank reached. Legends remember your name.</Text>
           )}
         </GlassPanel>
+
+        {currentClassNode ? (
+          <Pressable onPress={() => navigation.navigate("ClassEvolution")}>
+            <GlassPanel glow="arcane" style={styles.panel}>
+              <View style={styles.classPanelHeader}>
+                <Text style={styles.panelTitle}>Class</Text>
+                {eligibleEvolutions.length > 0 ? <Chip label="Evolution Ready" tier="legendary" /> : null}
+              </View>
+              <View style={styles.classRow}>
+                <ClassBadge node={currentClassNode} size={48} showTagline />
+                <Ionicons name="chevron-forward" size={18} color={colors.slate} />
+              </View>
+            </GlassPanel>
+          </Pressable>
+        ) : null}
 
         <View style={styles.statRow}>
           <StatTile icon="flame" label="Streak" value={`${longestStreak}d`} />
@@ -139,6 +184,8 @@ const styles = StyleSheet.create({
   panel: { padding: 16, gap: 10 },
   panelTitle: { fontFamily: fonts.bodySemibold, fontSize: 12, color: colors.gold[200], textTransform: "uppercase" },
   maxRank: { fontFamily: fonts.body, fontSize: 13, color: colors.slate },
+  classPanelHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  classRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   statRow: { flexDirection: "row", gap: 10 },
   statTile: { flex: 1, alignItems: "center", padding: 14, gap: 4 },
   statValue: { fontFamily: fonts.display, fontSize: 16, color: colors.white },

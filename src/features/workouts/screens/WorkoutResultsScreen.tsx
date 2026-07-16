@@ -14,7 +14,7 @@ type Props = NativeStackScreenProps<WorkoutsStackParamList, "Results">;
 export function WorkoutResultsScreen({ route }: Props) {
   const navigation = useNavigation<BottomTabNavigationProp<MainTabParamList>>();
   const { summary } = route.params;
-  const { xpResult, loot, goldEarned, newlyUnlockedAchievements, bossDefeated } = summary;
+  const { xpResult, loot, goldEarned, newlyUnlockedAchievements, bossDefeated, eligibleEvolutions } = summary;
 
   useEffect(() => {
     if (bossDefeated) playSound("boss_defeat");
@@ -68,6 +68,15 @@ export function WorkoutResultsScreen({ route }: Props) {
           </>
         ) : null}
 
+        {eligibleEvolutions.length > 0 ? (
+          <View style={styles.evolutionBanner}>
+            <Text style={styles.evolutionTitle}>⚡ Class Evolution Available</Text>
+            <Text style={styles.evolutionSubtitle}>
+              {eligibleEvolutions.map((n) => n.name).join(" · ")} — visit your Profile to evolve.
+            </Text>
+          </View>
+        ) : null}
+
         <GlowButton
           label="Return to Command Center"
           variant="neon"
@@ -99,5 +108,16 @@ const styles = StyleSheet.create({
   achievementRow: { marginBottom: 8 },
   achievementTitle: { fontFamily: fonts.bodySemibold, fontSize: 14, color: colors.gold[200] },
   achievementDescription: { fontFamily: fonts.body, fontSize: 12, color: colors.slate },
+  evolutionBanner: {
+    borderWidth: 1,
+    borderColor: `${colors.arcane[300]}66`,
+    backgroundColor: `${colors.arcane[300]}1A`,
+    borderRadius: 12,
+    padding: 12,
+    gap: 4,
+    marginTop: 4,
+  },
+  evolutionTitle: { fontFamily: fonts.bodySemibold, fontSize: 13, color: colors.arcane[100] },
+  evolutionSubtitle: { fontFamily: fonts.body, fontSize: 12, color: colors.slate },
   cta: { marginTop: 12 },
 });

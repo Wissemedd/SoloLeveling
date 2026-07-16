@@ -8,7 +8,7 @@ import { HomeStackNavigator } from "./HomeStackNavigator";
 import { WorkoutsStackNavigator } from "./WorkoutsStackNavigator";
 import { MissionsScreen } from "@/features/missions/screens/MissionsScreen";
 import { AchievementsScreen } from "@/features/achievements/screens/AchievementsScreen";
-import { ProfileScreen } from "@/features/profile/screens/ProfileScreen";
+import { ProfileStackNavigator } from "./ProfileStackNavigator";
 import type { MainTabParamList } from "./types";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -43,7 +43,7 @@ export function MainTabNavigator() {
       <Tab.Screen name="Workouts" component={WorkoutsStackNavigator} />
       <Tab.Screen name="Missions" component={MissionsScreen} />
       <Tab.Screen name="Achievements" component={AchievementsScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={ProfileStackNavigator} />
     </Tab.Navigator>
   );
 }

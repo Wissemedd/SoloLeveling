@@ -77,7 +77,7 @@ export function CommandCenterScreen({ navigation }: Props) {
           level={level}
           totalXp={xp}
           title={activeTitle}
-          onPressProfile={() => tabNavigation.navigate("Profile")}
+          onPressProfile={() => tabNavigation.navigate("Profile", { screen: "ProfileHome" })}
         />
         <StreakEnergyRow streakDays={streak.current} energy={energy} streakStatus={streakStatus} />
         <TodayQuestCard

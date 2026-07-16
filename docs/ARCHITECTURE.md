@@ -45,9 +45,10 @@ src/
     rewards/                loot table engine + chest-reveal UI
     achievements/           metric-threshold achievement engine + store
     bosses/                 weekly rotating boss, damage-from-xp, store
+    classes/                class evolution tree, engine + store (see "Class evolution" below)
     onboarding/             cinematic intro + hunter creation wizard
     home/                   Command Center screen + widgets
-    profile/                profile screen
+    profile/                profile screen (+ class evolution screen)
     ai-coach/               rule-based coach tip engine (LLM integration point)
     health/                 Health Connect integration — steps sync, counted as exercise
     notifications/          local notification copy + scheduler (expo-notifications)
@@ -74,7 +75,8 @@ Each `features/<name>` follows the same internal shape where it applies: `types.
    - `bossStore.dealDamageFromXp` → weekly boss HP
    - `lootEngine.rollChest` → gold + cosmetic rewards
    - `achievementStore.evaluate` → newly unlocked achievements
-2. `WorkoutResultsScreen` renders the aggregate summary: level-up banner, loot reveal, boss-defeated banner, new achievements.
+   - `classEngine.getEligibleEvolutions` → whether the hunter's class can now evolve (surfaced, not auto-applied — see "Class evolution")
+2. `WorkoutResultsScreen` renders the aggregate summary: level-up banner, loot reveal, boss-defeated banner, new achievements, class-evolution-available banner.
 
 This composition-hook pattern (rather than stores calling each other directly) keeps every store independently testable and avoids circular store imports.
 
@@ -97,6 +99,16 @@ Samsung Health doesn't expose a public SDK a third-party app can just integrate 
 - `components/StepsWidget.tsx` — Home-screen card with a connect CTA, today's step count, and a tap-to-resync action. `ProfileScreen` also exposes a "Samsung Health" row that toggles the connection.
 
 Enabling it end-to-end requires: `npx expo prebuild` (regenerates `android/`, already gitignored) then a fresh dev-client build (`expo run:android` or a new EAS dev build) — the `react-native-health-connect` and `expo-build-properties` (`minSdkVersion: 26`) plugins in `app.json` only take effect after that regeneration.
+
+### Class evolution
+
+`features/classes` turns the four onboarding archetypes (Vanguard/Phantom/Priest/Mage — picked as `HunterProfile.avatarId`) into full evolution trees, plus a fifth secret one.
+
+- `data/classTree.ts` — a flat `ClassNode[]` (parent-linked, like a tree stored as a list). Each archetype has a 2-node shared trunk (tier E → D) that forks into 3 branches of 4 tiers each (C → B → A → S), mirroring `HunterRank`. Branch gating (`ClassRequirement`) combines a `minLevel`, one or two "dominant" `RpgStatKey`s the hunter must currently be training toward (top-2 stats), and an achievement-style `metric`/`metricThreshold` pulled from the same `LifetimeStats` achievements already read — so evolution reflects real exercise history (pushups, distance, streak, time-of-day, etc.), not just level.
+- `engine/classEngine.ts` — pure functions: `getEligibleEvolutions` (children of the current node the hunter can evolve into right now), `getNextCandidates` (children regardless of eligibility, for previewing a locked fork), `isRequirementMet` / `requirementProgress`, `getPath` (root-to-current breadcrumb). `isWissem(name)` gates the secret archetype.
+- `store/classStore.ts` — persists `currentNodeId`, the locked-in `chosenBranch` (once a fork is taken, the other two branches are gone for good), and an evolution `history`. `initForArchetype` runs once at hunter creation; `ProfileScreen` also calls it lazily for hunters created before this feature shipped (persisted state has no migration step, so this is the backfill).
+- Evolution is **manual, not automatic**: `useCompleteWorkout` and `ProfileScreen` both compute eligibility live and surface it (a results-screen banner, a pulsing "Evolution Ready" chip on the Class panel), but the hunter confirms the promotion themselves on `ClassEvolutionScreen` (pushed from the Profile tab's own stack, `ProfileStackNavigator`).
+- **Secret Monarch path**: if the name typed in onboarding step 1 is "Wissem" (case-insensitive), a fifth archetype option appears — a single-line, no-branch tree ending in `Shadow Monarch` at rank S. `Shadow Monarch` is intentionally excluded from every other tree's mythic-tier pool so it stays unique to that path.
 
 ## Next phase (not built yet)
 
