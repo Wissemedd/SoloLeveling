@@ -11,6 +11,6 @@ export type AvatarOption = {
 export const avatarOptions: AvatarOption[] = [
   { id: "vanguard", className: "Vanguard", icon: "shield", color: "#9D4EFF" },
   { id: "phantom", className: "Phantom", icon: "flash", color: "#22D9F5" },
-  { id: "warden", className: "Warden", icon: "fitness", color: "#F5B94D" },
-  { id: "oracle", className: "Oracle", icon: "eye", color: "#B87BFF" },
+  { id: "priest", className: "Priest", icon: "fitness", color: "#F5B94D" },
+  { id: "mage", className: "Mage", icon: "eye", color: "#B87BFF" },
 ];
