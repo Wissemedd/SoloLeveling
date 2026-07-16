@@ -7,6 +7,7 @@ export type LifetimeStats = {
   level: number;
   morningWorkouts: number; // completed before 7am
   nightWorkouts: number; // completed after 10pm
+  totalSteps: number; // lifetime steps synced from a connected pedometer (e.g. Samsung Health)
 };
 
 export type AchievementMetric = keyof LifetimeStats;

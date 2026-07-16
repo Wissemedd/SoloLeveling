@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { ScreenBackground, GlassPanel, StatBar, SectionHeader } from "@/design-system/components";
+import { ScreenBackground, GlassPanel, StatBar, SectionHeader, GateEmblem, ShadowSigil } from "@/design-system/components";
 import { colors, fonts, rarity } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useLifetimeStatsStore } from "@/features/player/store/lifetimeStatsStore";
@@ -52,7 +52,13 @@ export function AchievementsScreen() {
           return (
             <GlassPanel glow={isUnlocked ? "gold" : "none"} style={[styles.card, !isUnlocked && styles.locked]}>
               <View style={[styles.iconWrap, { borderColor: color }]}>
-                <Ionicons name={isUnlocked ? "trophy" : "trophy-outline"} size={18} color={color} />
+                {isUnlocked && item.tier === "legendary" ? (
+                  <GateEmblem size={34} accent="gold" animated={false} />
+                ) : isUnlocked && item.tier === "epic" ? (
+                  <ShadowSigil size={26} accent="arcane" pulse={false} />
+                ) : (
+                  <Ionicons name={isUnlocked ? "trophy" : "trophy-outline"} size={18} color={color} />
+                )}
               </View>
               <View style={styles.textCol}>
                 <Text style={styles.title}>{item.title}</Text>

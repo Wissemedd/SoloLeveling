@@ -12,9 +12,14 @@ const ACCENT_BY_STAT: Record<string, "neon" | "arcane" | "gold"> = {
   vitality: "gold",
 };
 
-/** Gives every bar visual headroom so it never looks maxed-out as stats grow. */
+/**
+ * Gives every bar visual headroom so it never looks maxed-out as stats grow.
+ * Headroom is fixed (+30) rather than proportional, so a fresh hunter's base
+ * stat (10) renders at a quarter of the bar instead of half — leaving three
+ * quarters of runway to visibly fill in as the stat is trained up.
+ */
 function visualMax(value: number): number {
-  return Math.max(20, Math.ceil((value + 8) / 10) * 10);
+  return Math.max(40, Math.ceil((value + 30) / 10) * 10);
 }
 
 export function StatsGrid({ stats }: { stats: RpgStats }) {

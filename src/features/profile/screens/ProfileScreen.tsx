@@ -1,13 +1,14 @@
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { ScreenBackground, GlassPanel, RankBadge, StatBar, SectionHeader, Chip } from "@/design-system/components";
+import { ScreenBackground, GlassPanel, RankBadge, StatBar, SectionHeader, Chip, GateEmblem } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useWorkoutStore } from "@/features/workouts/store/workoutStore";
 import { useRewardsStore } from "@/features/rewards/store/rewardsStore";
 import { rankProgress } from "@/features/player/engine/rankEngine";
 import { powerLevel } from "@/features/player/engine/statsEngine";
+import { useHealthStore } from "@/features/health/store/healthStore";
 
 export function ProfileScreen() {
   const profile = usePlayerStore((s) => s.profile);
@@ -18,14 +19,36 @@ export function ProfileScreen() {
   const longestStreak = usePlayerStore((s) => s.streak.longest);
   const totalWorkouts = useWorkoutStore((s) => s.totalWorkoutsCompleted());
   const collection = useRewardsStore((s) => s.collection);
+  const healthStatus = useHealthStore((s) => s.status);
+  const connectHealth = useHealthStore((s) => s.connect);
+  const disconnectHealth = useHealthStore((s) => s.disconnect);
 
   const { upcoming, progress } = rankProgress(level);
+
+  const healthHint =
+    healthStatus === "connected"
+      ? "Connected"
+      : healthStatus === "unsupported-platform"
+        ? "Android only"
+        : healthStatus === "needs-update" || healthStatus === "unavailable"
+          ? "Unavailable"
+          : "Tap to connect";
+
+  const handleToggleHealthConnection = () => {
+    if (healthStatus === "connected") disconnectHealth();
+    else connectHealth().catch(() => {});
+  };
 
   return (
     <ScreenBackground accent="gold" particles={false}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.headerRow}>
-          <RankBadge rank={rank} size={72} />
+          <View style={styles.badgeWrap}>
+            <View style={styles.gateBehindBadge}>
+              <GateEmblem size={104} accent="gold" />
+            </View>
+            <RankBadge rank={rank} size={72} />
+          </View>
           <View style={styles.headerTextCol}>
             <Text style={styles.name}>{profile?.name ?? "Hunter"}</Text>
             <Text style={styles.meta}>
@@ -58,6 +81,12 @@ export function ProfileScreen() {
         </View>
 
         <SectionHeader title="More" />
+        <MenuRow
+          icon="footsteps-outline"
+          label="Samsung Health"
+          hint={healthHint}
+          onPress={healthStatus === "unsupported-platform" || healthStatus === "unavailable" ? undefined : handleToggleHealthConnection}
+        />
         <MenuRow icon="people-outline" label="Guild & Friends" hint="Coming soon" />
         <MenuRow icon="sparkles-outline" label="AI Coach" hint="Coming soon" />
         <MenuRow icon="diamond-outline" label="Premium" hint="Cosmetics & analytics" />
@@ -77,8 +106,18 @@ function StatTile({ icon, label, value }: { icon: keyof typeof Ionicons.glyphMap
   );
 }
 
-function MenuRow({ icon, label, hint }: { icon: keyof typeof Ionicons.glyphMap; label: string; hint: string }) {
-  return (
+function MenuRow({
+  icon,
+  label,
+  hint,
+  onPress,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  hint: string;
+  onPress?: () => void;
+}) {
+  const row = (
     <GlassPanel glow="none" style={styles.menuRow}>
       <Ionicons name={icon} size={18} color={colors.slate} />
       <Text style={styles.menuLabel}>{label}</Text>
@@ -86,11 +125,14 @@ function MenuRow({ icon, label, hint }: { icon: keyof typeof Ionicons.glyphMap; 
       <Ionicons name="chevron-forward" size={16} color={colors.slate} />
     </GlassPanel>
   );
+  return onPress ? <Pressable onPress={onPress}>{row}</Pressable> : row;
 }
 
 const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48, gap: 16 },
   headerRow: { flexDirection: "row", alignItems: "center", gap: 16 },
+  badgeWrap: { width: 72, height: 72, alignItems: "center", justifyContent: "center" },
+  gateBehindBadge: { position: "absolute", alignItems: "center", justifyContent: "center" },
   headerTextCol: { flex: 1 },
   name: { fontFamily: fonts.display, fontSize: 20, color: colors.white },
   meta: { fontFamily: fonts.bodyMedium, fontSize: 13, color: colors.slate, marginTop: 2 },

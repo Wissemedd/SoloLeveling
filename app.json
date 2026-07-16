@@ -20,7 +20,8 @@
       },
       "predictiveBackGestureEnabled": false,
       "permissions": [
-        "android.permission.MODIFY_AUDIO_SETTINGS"
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.health.READ_STEPS"
       ]
     },
     "web": {
@@ -37,7 +38,16 @@
         }
       ],
       "expo-notifications",
-      "expo-audio"
+      "expo-audio",
+      "react-native-health-connect",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {

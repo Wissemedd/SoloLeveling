@@ -13,11 +13,13 @@ export const achievements: Achievement[] = [
   { id: "workouts-50", title: "Half Century", description: "Complete 50 workouts.", metric: "totalWorkouts", targetValue: 50, tier: "rare" },
   { id: "workouts-100", title: "Centurion", description: "Complete 100 workouts.", metric: "totalWorkouts", targetValue: 100, tier: "epic" },
   { id: "workouts-500", title: "Legend Rank", description: "Complete 500 workouts.", metric: "totalWorkouts", targetValue: 500, tier: "legendary" },
+  { id: "workouts-1000", title: "Monarch's Discipline", description: "Complete 1,000 workouts.", metric: "totalWorkouts", targetValue: 1000, tier: "legendary" },
 
   // Push-ups
   { id: "pushups-100", title: "Century Fists", description: "Bank 100 lifetime push-ups.", metric: "totalPushups", targetValue: 100, tier: "common" },
   { id: "pushups-1000", title: "Iron Chest", description: "Bank 1,000 lifetime push-ups.", metric: "totalPushups", targetValue: 1000, tier: "rare" },
   { id: "pushups-10000", title: "Foundation of Steel", description: "Bank 10,000 lifetime push-ups.", metric: "totalPushups", targetValue: 10000, tier: "epic" },
+  { id: "pushups-50000", title: "Endless Ascension", description: "Bank 50,000 lifetime push-ups.", metric: "totalPushups", targetValue: 50000, tier: "legendary" },
 
   // Distance
   { id: "distance-10", title: "First Mile Marker", description: "Cover 10 km on foot.", metric: "totalDistanceKm", targetValue: 10, tier: "common" },
@@ -26,7 +28,15 @@ export const achievements: Achievement[] = [
   { id: "distance-500", title: "Roadbound Hunter", description: "Cover 500 km on foot.", metric: "totalDistanceKm", targetValue: 500, tier: "epic" },
   { id: "distance-1000", title: "Horizon Chaser", description: "Cover 1,000 km on foot.", metric: "totalDistanceKm", targetValue: 1000, tier: "legendary" },
 
+  // Steps — synced from a connected pedometer (Samsung Health via Health Connect)
+  { id: "steps-1000", title: "Beyond the Gate", description: "Log 1,000 lifetime steps through a connected pedometer.", metric: "totalSteps", targetValue: 1000, tier: "common" },
+  { id: "steps-25000", title: "Dungeon Scout", description: "Log 25,000 lifetime steps.", metric: "totalSteps", targetValue: 25000, tier: "common" },
+  { id: "steps-100000", title: "Path of the Hunter", description: "Log 100,000 lifetime steps.", metric: "totalSteps", targetValue: 100000, tier: "rare" },
+  { id: "steps-500000", title: "Continental Wanderer", description: "Log 500,000 lifetime steps.", metric: "totalSteps", targetValue: 500000, tier: "epic" },
+  { id: "steps-1000000", title: "World Walker", description: "Log 1,000,000 lifetime steps.", metric: "totalSteps", targetValue: 1000000, tier: "legendary" },
+
   // Streak
+  { id: "streak-3", title: "First Vow", description: "Reach a 3-day streak.", metric: "longestStreak", targetValue: 3, tier: "common" },
   { id: "streak-7", title: "One Week Vow", description: "Reach a 7-day streak.", metric: "longestStreak", targetValue: 7, tier: "common" },
   { id: "streak-30", title: "No Excuse", description: "Reach a 30-day streak.", metric: "longestStreak", targetValue: 30, tier: "rare" },
   { id: "streak-100", title: "Unshakable", description: "Reach a 100-day streak.", metric: "longestStreak", targetValue: 100, tier: "epic" },
@@ -36,16 +46,21 @@ export const achievements: Achievement[] = [
   { id: "calories-5000", title: "Spark Ignited", description: "Burn 5,000 lifetime calories.", metric: "totalCaloriesBurned", targetValue: 5000, tier: "common" },
   { id: "calories-50000", title: "Furnace Core", description: "Burn 50,000 lifetime calories.", metric: "totalCaloriesBurned", targetValue: 50000, tier: "rare" },
   { id: "calories-200000", title: "Wildfire", description: "Burn 200,000 lifetime calories.", metric: "totalCaloriesBurned", targetValue: 200000, tier: "epic" },
+  { id: "calories-1000000", title: "Sovereign's Furnace", description: "Burn 1,000,000 lifetime calories.", metric: "totalCaloriesBurned", targetValue: 1000000, tier: "legendary" },
 
   // Level
   { id: "level-10", title: "D-Rank Awakening", description: "Reach hunter level 10.", metric: "level", targetValue: 10, tier: "common" },
   { id: "level-35", title: "B-Rank Ascension", description: "Reach hunter level 35.", metric: "level", targetValue: 35, tier: "rare" },
   { id: "level-70", title: "S-Rank Awakening", description: "Reach hunter level 70.", metric: "level", targetValue: 70, tier: "epic" },
   { id: "level-100", title: "National Level", description: "Reach hunter level 100.", metric: "level", targetValue: 100, tier: "legendary" },
+  { id: "level-150", title: "S-Rank Transcendence", description: "Reach hunter level 150.", metric: "level", targetValue: 150, tier: "legendary" },
+  { id: "level-200", title: "Peak of the Board", description: "Reach hunter level 200 — the edge of the rankings.", metric: "level", targetValue: 200, tier: "legendary" },
 
   // Time-of-day
   { id: "morning-1", title: "Morning Warrior", description: "Complete a workout before 7 AM.", metric: "morningWorkouts", targetValue: 1, tier: "common" },
   { id: "morning-25", title: "Dawn's Vanguard", description: "Complete 25 workouts before 7 AM.", metric: "morningWorkouts", targetValue: 25, tier: "rare" },
+  { id: "morning-100", title: "Sunlit Vanguard", description: "Complete 100 workouts before 7 AM.", metric: "morningWorkouts", targetValue: 100, tier: "epic" },
   { id: "night-1", title: "Night Hunter", description: "Complete a workout after 10 PM.", metric: "nightWorkouts", targetValue: 1, tier: "common" },
   { id: "night-25", title: "Creature of Shadow", description: "Complete 25 workouts after 10 PM.", metric: "nightWorkouts", targetValue: 25, tier: "rare" },
+  { id: "night-100", title: "Sovereign of Night", description: "Complete 100 workouts after 10 PM.", metric: "nightWorkouts", targetValue: 100, tier: "epic" },
 ];

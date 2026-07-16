@@ -20,6 +20,7 @@ import { UtilityWidgetsRow } from "../components/UtilityWidgetsRow";
 import { DailyQuoteCard } from "../components/DailyQuoteCard";
 import { CoachTipCard } from "@/features/ai-coach/components/CoachTipCard";
 import { scheduleStreakAtRiskNudge } from "@/features/notifications/engine/notificationScheduler";
+import { StepsWidget } from "@/features/health/components/StepsWidget";
 
 type Props = NativeStackScreenProps<HomeStackParamList, "CommandCenter">;
 
@@ -85,6 +86,7 @@ export function CommandCenterScreen({ navigation }: Props) {
         />
         <StatsGrid stats={stats} />
         <WeeklyProgressStrip history={history} />
+        <StepsWidget />
         <BossBanner damageDealt={bossDamage} onPress={() => navigation.navigate("Boss")} />
         <CoachTipCard
           context={{

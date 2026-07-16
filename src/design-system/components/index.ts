@@ -7,3 +7,5 @@ export * from "./RankBadge";
 export * from "./SectionHeader";
 export * from "./Chip";
 export * from "./ProgressRing";
+export * from "./GateEmblem";
+export * from "./ShadowSigil";

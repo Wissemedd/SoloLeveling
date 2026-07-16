@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } from "react-native-reanimated";
-import { ScreenBackground, GlowButton } from "@/design-system/components";
+import { ScreenBackground, GlowButton, GateEmblem } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import type { OnboardingStackParamList } from "@/app/navigation/types";
 
@@ -24,6 +24,7 @@ function useFadeIn(delayMs: number) {
 }
 
 export function CinematicIntroScreen({ navigation }: Props) {
+  const gateStyle = useFadeIn(0);
   const lineOneStyle = useFadeIn(300);
   const lineTwoStyle = useFadeIn(1000);
   const lineThreeStyle = useFadeIn(1700);
@@ -32,6 +33,9 @@ export function CinematicIntroScreen({ navigation }: Props) {
   return (
     <ScreenBackground accent="arcane">
       <View style={styles.content}>
+        <Animated.View style={[styles.gateWrap, gateStyle]}>
+          <GateEmblem size={180} accent="arcane" />
+        </Animated.View>
         <View style={styles.textBlock}>
           <Animated.Text style={[styles.eyebrow, lineOneStyle]}>A GATE HAS OPENED</Animated.Text>
           <Animated.Text style={[styles.headline, lineTwoStyle]}>You have been selected.</Animated.Text>
@@ -48,7 +52,8 @@ export function CinematicIntroScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  content: { flex: 1, justifyContent: "center", paddingHorizontal: 32, gap: 60 },
+  content: { flex: 1, justifyContent: "center", paddingHorizontal: 32, gap: 36 },
+  gateWrap: { alignItems: "center" },
   textBlock: { gap: 16 },
   eyebrow: {
     fontFamily: fonts.bodyBold,

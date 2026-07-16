@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { GlassPanel, StatBar, Chip } from "@/design-system/components";
+import { GlassPanel, StatBar, Chip, GateEmblem } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import { bossCycleEnd, currentWeekBoss, healthRemaining } from "@/features/bosses/engine/bossEngine";
 
@@ -26,6 +26,9 @@ export function BossBanner({ damageDealt, onPress }: Props) {
   return (
     <Pressable onPress={onPress}>
       <GlassPanel glow="danger" style={styles.panel}>
+        <View pointerEvents="none" style={styles.gateWatermark}>
+          <GateEmblem size={110} accent="danger" animated={false} />
+        </View>
         <View style={styles.headerRow}>
           <Chip label="Weekly Boss" tier="epic" />
           <Text style={styles.countdown}>{countdown}</Text>
@@ -44,7 +47,8 @@ export function BossBanner({ damageDealt, onPress }: Props) {
 }
 
 const styles = StyleSheet.create({
-  panel: { padding: 18, gap: 10, marginHorizontal: 20 },
+  panel: { padding: 18, gap: 10, marginHorizontal: 20, overflow: "hidden" },
+  gateWatermark: { position: "absolute", top: -30, right: -30, opacity: 0.35 },
   headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   countdown: { fontFamily: fonts.bodyMedium, fontSize: 11, color: colors.slate },
   name: { fontFamily: fonts.display, fontSize: 18, color: colors.white, marginTop: 2 },

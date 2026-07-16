@@ -35,7 +35,9 @@ src/
   design-system/
     theme/                 colors, typography, spacing — single source of truth
     components/            ScreenBackground, GlassPanel, GlowButton, StatBar,
-                            RankBadge, ProgressRing, Chip, SectionHeader, ParticleField
+                            RankBadge, ProgressRing, Chip, SectionHeader, ParticleField,
+                            GateEmblem, ShadowSigil (original decorative motifs — no
+                            licensed artwork; see "Original visual motifs" below)
   features/
     player/                XP/level/rank/RPG-stat engine + store (the core loop)
     workouts/               exercise + workout data, session engine, screens
@@ -47,6 +49,7 @@ src/
     home/                   Command Center screen + widgets
     profile/                profile screen
     ai-coach/               rule-based coach tip engine (LLM integration point)
+    health/                 Health Connect integration — steps sync, counted as exercise
     notifications/          local notification copy + scheduler (expo-notifications)
     sound/                  sound manager (silent until real SFX assets are added)
     social/                 types only — no backend yet, see "Next phase"
@@ -78,6 +81,22 @@ This composition-hook pattern (rather than stores calling each other directly) k
 ## Design system
 
 `tailwind.config.js` and `src/design-system/theme/colors.ts` are the same palette expressed twice (Tailwind className usage vs. raw values for SVG/Reanimated/LinearGradient) — keep them in sync if the palette changes. Palette: deep black base, dark-blue panels, electric purple (arcane) for progression/rarity, neon cyan for the primary active state, gold reserved for legendary rewards, red reserved for danger/boss/streak-at-risk.
+
+### Original visual motifs
+
+`GateEmblem` (a rotating rune-ringed portal) and `ShadowSigil` (a hooded silhouette with a glowing eye) are original `react-native-svg` compositions evoking the app's own dungeon-gate fiction (see `bosses.ts`). Same rule as everywhere else in this repo: no licensed artwork, screenshots, or character likenesses — homage through original geometry and terminology only. They're layered behind `RankBadge` on the Home header and Profile, as a boss-banner watermark, on the onboarding "gate has opened" beat, and as unlock icons for epic/legendary achievements.
+
+### Pedometer integration (Health Connect)
+
+Samsung Health doesn't expose a public SDK a third-party app can just integrate with — instead, Samsung Health writes step data into **Health Connect**, Android's OS-level health data hub, and that's what `features/health` talks to via `react-native-health-connect`. This requires a native module, so it only works in a dev-client/EAS build (not Expo Go) and only on Android (`unsupported-platform` status on iOS).
+
+- `services/healthConnectService.ts` — the only file that imports the native library. Every call is platform-gated and wrapped in try/catch, since `TurboModuleRegistry.getEnforcing` throws the instant its JS evaluates on a build without the native module linked (iOS, Expo Go, or a stale dev client).
+- `store/healthStore.ts` — connection status, today's step count, and a per-date "already credited" ledger so re-syncing the same day only counts the delta.
+- `engine/stepsEngine.ts` — pure conversion functions (steps → km / calories / XP / endurance stat gains), unit-tested like the other engines.
+- `hooks/useSyncSteps.ts` — mirrors `useCompleteWorkout`: fans new steps into XP, lifetime counters, mission progress, and achievements, so synced steps are counted as real exercise rather than a cosmetic-only counter. It deliberately does **not** increment `totalWorkouts` — that stays reserved for structured workout sessions.
+- `components/StepsWidget.tsx` — Home-screen card with a connect CTA, today's step count, and a tap-to-resync action. `ProfileScreen` also exposes a "Samsung Health" row that toggles the connection.
+
+Enabling it end-to-end requires: `npx expo prebuild` (regenerates `android/`, already gitignored) then a fresh dev-client build (`expo run:android` or a new EAS dev build) — the `react-native-health-connect` and `expo-build-properties` (`minSdkVersion: 26`) plugins in `app.json` only take effect after that regeneration.
 
 ## Next phase (not built yet)
 

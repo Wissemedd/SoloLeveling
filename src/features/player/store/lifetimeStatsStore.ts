@@ -17,6 +17,7 @@ const initialCounters: Counters = {
   totalCaloriesBurned: 0,
   morningWorkouts: 0,
   nightWorkouts: 0,
+  totalSteps: 0,
 };
 
 /**
@@ -40,6 +41,16 @@ export const useLifetimeStatsStore = create<LifetimeStatsStore>()(
     {
       name: "solo-leveling.lifetime-stats",
       storage: createJSONStorage(() => appStorage),
+      // Deep-merge counters so a newly added field (e.g. totalSteps) defaults
+      // to 0 for devices with an older persisted blob instead of `undefined`.
+      merge: (persisted, current) => {
+        const persistedState = persisted as Partial<LifetimeStatsStore> | undefined;
+        return {
+          ...current,
+          ...persistedState,
+          counters: { ...current.counters, ...persistedState?.counters },
+        };
+      },
     },
   ),
 );
