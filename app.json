@@ -37,12 +37,7 @@
         }
       ],
       "expo-notifications",
-      [
-        "expo-av",
-        {
-          "microphonePermission": false
-        }
-      ]
+      "expo-audio"
     ],
     "extra": {
       "eas": {

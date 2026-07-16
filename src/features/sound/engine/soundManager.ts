@@ -1,4 +1,4 @@
-import { Audio } from "expo-av";
+import { createAudioPlayer, type AudioPlayer } from "expo-audio";
 
 export type SoundKey =
   | "level_up"
@@ -18,26 +18,32 @@ export type SoundKey =
  */
 const SOUND_ASSETS: Partial<Record<SoundKey, number>> = {};
 
-const loadedSounds = new Map<SoundKey, Audio.Sound>();
+const loadedPlayers = new Map<SoundKey, AudioPlayer>();
 
 export async function playSound(key: SoundKey): Promise<void> {
   const asset = SOUND_ASSETS[key];
   if (!asset) return;
 
   try {
-    let sound = loadedSounds.get(key);
-    if (!sound) {
-      const { sound: created } = await Audio.Sound.createAsync(asset);
-      sound = created;
-      loadedSounds.set(key, sound);
+    let player = loadedPlayers.get(key);
+    if (!player) {
+      player = createAudioPlayer(asset);
+      loadedPlayers.set(key, player);
     }
-    await sound.replayAsync();
+    player.seekTo(0);
+    player.play();
   } catch {
     // Audio playback is best-effort — never block gameplay on a missing device audio session.
   }
 }
 
 export async function unloadAllSounds(): Promise<void> {
-  await Promise.all([...loadedSounds.values()].map((s) => s.unloadAsync().catch(() => {})));
-  loadedSounds.clear();
+  loadedPlayers.forEach((player) => {
+    try {
+      player.remove();
+    } catch {
+      // Best-effort cleanup — player may already be released.
+    }
+  });
+  loadedPlayers.clear();
 }
