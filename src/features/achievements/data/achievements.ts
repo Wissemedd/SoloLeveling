@@ -63,4 +63,24 @@ export const achievements: Achievement[] = [
   { id: "night-1", title: "Night Hunter", description: "Complete a workout after 10 PM.", metric: "nightWorkouts", targetValue: 1, tier: "common" },
   { id: "night-25", title: "Creature of Shadow", description: "Complete 25 workouts after 10 PM.", metric: "nightWorkouts", targetValue: 25, tier: "rare" },
   { id: "night-100", title: "Sovereign of Night", description: "Complete 100 workouts after 10 PM.", metric: "nightWorkouts", targetValue: 100, tier: "epic" },
+
+  // Adventure — Gates cleared (see src/features/dungeons)
+  { id: "dungeons-1", title: "First Gate", description: "Clear your first Gate.", metric: "totalDungeonsCleared", targetValue: 1, tier: "common" },
+  { id: "dungeons-25", title: "Gatebreaker", description: "Clear 25 Gates.", metric: "totalDungeonsCleared", targetValue: 25, tier: "rare" },
+  { id: "dungeons-100", title: "Warden of Thresholds", description: "Clear 100 Gates.", metric: "totalDungeonsCleared", targetValue: 100, tier: "epic" },
+  { id: "dungeons-500", title: "Sovereign of Gates", description: "Clear 500 Gates.", metric: "totalDungeonsCleared", targetValue: 500, tier: "legendary" },
+
+  // Adventure — Monsters defeated
+  { id: "monsters-100", title: "Cull of the Weak", description: "Defeat 100 monsters.", metric: "totalMonstersDefeated", targetValue: 100, tier: "common" },
+  { id: "monsters-1000", title: "Exterminator", description: "Defeat 1,000 monsters.", metric: "totalMonstersDefeated", targetValue: 1000, tier: "rare" },
+  { id: "monsters-10000", title: "Harbinger of the Hunt", description: "Defeat 10,000 monsters.", metric: "totalMonstersDefeated", targetValue: 10000, tier: "epic" },
+
+  // Adventure — Bosses defeated
+  { id: "bosses-1", title: "Boss Slayer", description: "Defeat your first Gate boss.", metric: "totalBossesDefeated", targetValue: 1, tier: "rare" },
+  { id: "bosses-25", title: "Bane of Sovereigns", description: "Defeat 25 Gate bosses.", metric: "totalBossesDefeated", targetValue: 25, tier: "epic" },
+  { id: "bosses-100", title: "Sovereign's Reckoning", description: "Defeat 100 Gate bosses.", metric: "totalBossesDefeated", targetValue: 100, tier: "legendary" },
+
+  // Adventure — Forge
+  { id: "crafted-1", title: "First Forging", description: "Upgrade your first piece of equipment at the Forge.", metric: "totalItemsCrafted", targetValue: 1, tier: "common" },
+  { id: "crafted-50", title: "Master Smith", description: "Upgrade equipment 50 times at the Forge.", metric: "totalItemsCrafted", targetValue: 50, tier: "epic" },
 ];

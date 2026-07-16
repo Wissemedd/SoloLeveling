@@ -68,6 +68,9 @@ export type XpSource =
   | "meditation"
   | "hydration"
   | "sleep"
+  | "reading"
+  | "manga"
+  | "chores"
   | "personal_record"
   | "consistency"
   | "mission"
@@ -90,7 +93,9 @@ export type PlayerState = {
   rank: HunterRank;
   stats: RpgStats;
   streak: StreakState;
-  energy: number; // 0..100, regenerates daily, spent on workouts
+  energy: number; // 0..100, regenerates daily, spent entering Gates
+  /** ISO date (yyyy-mm-dd) energy was last topped up — see reconcileEnergyOnOpen. */
+  lastEnergyRegenDate: string | null;
   gold: number;
   unlockedTitles: string[];
   activeTitle: string | null;

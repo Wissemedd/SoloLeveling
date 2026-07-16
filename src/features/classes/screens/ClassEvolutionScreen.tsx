@@ -32,6 +32,10 @@ const METRIC_LABELS: Record<AchievementMetric, string> = {
   morningWorkouts: "Séances avant 7h",
   nightWorkouts: "Séances après 22h",
   totalSteps: "Pas cumulés",
+  totalDungeonsCleared: "Portes refermées",
+  totalMonstersDefeated: "Monstres vaincus",
+  totalBossesDefeated: "Boss vaincus",
+  totalItemsCrafted: "Objets forgés",
 };
 
 const RANK_TIER: Record<HunterRank, RarityTier> = {

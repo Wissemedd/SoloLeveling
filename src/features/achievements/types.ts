@@ -8,6 +8,12 @@ export type LifetimeStats = {
   morningWorkouts: number; // completed before 7am
   nightWorkouts: number; // completed after 10pm
   totalSteps: number; // lifetime steps synced from a connected pedometer (e.g. Samsung Health)
+  // Adventure-world counters — progress-only (unlock achievements/bestiary),
+  // never fed back into XP or RpgStats. See src/features/dungeons, /combat.
+  totalDungeonsCleared: number;
+  totalMonstersDefeated: number;
+  totalBossesDefeated: number;
+  totalItemsCrafted: number;
 };
 
 export type AchievementMetric = keyof LifetimeStats;

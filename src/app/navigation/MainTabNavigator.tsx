@@ -7,7 +7,7 @@ import { colors } from "@/design-system/theme";
 import { HomeStackNavigator } from "./HomeStackNavigator";
 import { WorkoutsStackNavigator } from "./WorkoutsStackNavigator";
 import { MissionsScreen } from "@/features/missions/screens/MissionsScreen";
-import { AchievementsScreen } from "@/features/achievements/screens/AchievementsScreen";
+import { AdventureStackNavigator } from "./AdventureStackNavigator";
 import { ProfileStackNavigator } from "./ProfileStackNavigator";
 import type { MainTabParamList } from "./types";
 
@@ -17,7 +17,7 @@ const ICONS: Record<keyof MainTabParamList, keyof typeof Ionicons.glyphMap> = {
   Home: "home",
   Workouts: "barbell",
   Missions: "flag",
-  Achievements: "trophy",
+  Adventure: "flash",
   Profile: "person-circle",
 };
 
@@ -42,7 +42,7 @@ export function MainTabNavigator() {
       <Tab.Screen name="Home" component={HomeStackNavigator} />
       <Tab.Screen name="Workouts" component={WorkoutsStackNavigator} />
       <Tab.Screen name="Missions" component={MissionsScreen} />
-      <Tab.Screen name="Achievements" component={AchievementsScreen} />
+      <Tab.Screen name="Adventure" component={AdventureStackNavigator} />
       <Tab.Screen name="Profile" component={ProfileStackNavigator} />
     </Tab.Navigator>
   );

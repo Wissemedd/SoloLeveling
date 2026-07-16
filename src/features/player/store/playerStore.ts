@@ -30,6 +30,7 @@ type PlayerStore = PlayerState & {
   reconcileStreakOnOpen: () => void;
   spendEnergy: (amount: number) => boolean;
   restoreEnergy: (amount: number) => void;
+  reconcileEnergyOnOpen: () => void;
   addGold: (amount: number) => void;
   unlockTitle: (title: string) => void;
   setActiveTitle: (title: string | null) => void;
@@ -44,6 +45,7 @@ const initialState: PlayerState = {
   stats: createBaseStats(),
   streak: INITIAL_STREAK,
   energy: 100,
+  lastEnergyRegenDate: null,
   gold: 0,
   unlockedTitles: ["Awakened"],
   activeTitle: "Awakened",
@@ -65,6 +67,7 @@ export const usePlayerStore = create<PlayerStore>()(
           stats: createBaseStats(),
           streak: INITIAL_STREAK,
           energy: 100,
+          lastEnergyRegenDate: todayIso(),
           gold: 0,
         }),
 
@@ -93,6 +96,12 @@ export const usePlayerStore = create<PlayerStore>()(
       },
 
       restoreEnergy: (amount) => set({ energy: Math.min(100, get().energy + amount) }),
+
+      reconcileEnergyOnOpen: () => {
+        const today = todayIso();
+        if (get().lastEnergyRegenDate === today) return;
+        set({ energy: 100, lastEnergyRegenDate: today });
+      },
 
       addGold: (amount) => set({ gold: Math.max(0, get().gold + amount) }),
 

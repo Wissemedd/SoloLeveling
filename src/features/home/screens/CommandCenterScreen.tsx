@@ -36,6 +36,7 @@ export function CommandCenterScreen({ navigation }: Props) {
   const energy = usePlayerStore((s) => s.energy);
   const activeTitle = usePlayerStore((s) => s.activeTitle);
   const reconcileStreakOnOpen = usePlayerStore((s) => s.reconcileStreakOnOpen);
+  const reconcileEnergyOnOpen = usePlayerStore((s) => s.reconcileEnergyOnOpen);
 
   const missions = useMissionStore((s) => s.active);
   const refreshBoard = useMissionStore((s) => s.refreshBoard);
@@ -46,9 +47,10 @@ export function CommandCenterScreen({ navigation }: Props) {
 
   useEffect(() => {
     reconcileStreakOnOpen();
+    reconcileEnergyOnOpen();
     refreshBoard();
     syncBossWeek();
-  }, [reconcileStreakOnOpen, refreshBoard, syncBossWeek]);
+  }, [reconcileStreakOnOpen, reconcileEnergyOnOpen, refreshBoard, syncBossWeek]);
 
   const todaysQuest = missions.find((m) => m.period === "daily" && !m.completedAt) ?? null;
   const streakStatus = getStreakStatus(streak);

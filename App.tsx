@@ -23,6 +23,12 @@ import { useRewardsStore } from "@/features/rewards/store/rewardsStore";
 import { useAchievementStore } from "@/features/achievements/store/achievementStore";
 import { useLifetimeStatsStore } from "@/features/player/store/lifetimeStatsStore";
 import { useBossStore } from "@/features/bosses/store/bossStore";
+import { useActivityStore } from "@/features/activities/store/activityStore";
+import { useCharacterStore } from "@/features/character/store/characterStore";
+import { useInventoryStore } from "@/features/inventory/store/inventoryStore";
+import { useBestiaryStore } from "@/features/monsters/store/bestiaryStore";
+import { useDungeonStore } from "@/features/dungeons/store/dungeonStore";
+import { useCombatHistoryStore } from "@/features/combat/store/combatHistoryStore";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -44,6 +50,12 @@ export default function App() {
     useAchievementStore,
     useLifetimeStatsStore,
     useBossStore,
+    useActivityStore,
+    useCharacterStore,
+    useInventoryStore,
+    useBestiaryStore,
+    useDungeonStore,
+    useCombatHistoryStore,
   ]);
 
   const ready = fontsLoaded && storesHydrated;

@@ -126,13 +126,14 @@ export function ProfileScreen() {
         </View>
 
         <SectionHeader title="More" />
+        <MenuRow icon="trophy-outline" label="Achievements" hint="" onPress={() => navigation.navigate("Achievements")} />
+        <MenuRow icon="library-outline" label="Activity Journal" hint="Reading, manga, chores…" onPress={() => navigation.navigate("ActivityLog")} />
         <MenuRow
           icon="footsteps-outline"
           label="Samsung Health"
           hint={healthHint}
           onPress={healthStatus === "unsupported-platform" || healthStatus === "unavailable" ? undefined : handleToggleHealthConnection}
         />
-        <MenuRow icon="people-outline" label="Guild & Friends" hint="Coming soon" />
         <MenuRow icon="sparkles-outline" label="AI Coach" hint="Coming soon" />
         <MenuRow icon="diamond-outline" label="Premium" hint="Cosmetics & analytics" />
         <MenuRow icon="settings-outline" label="Settings" hint="" />

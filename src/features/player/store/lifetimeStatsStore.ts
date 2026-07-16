@@ -18,6 +18,10 @@ const initialCounters: Counters = {
   morningWorkouts: 0,
   nightWorkouts: 0,
   totalSteps: 0,
+  totalDungeonsCleared: 0,
+  totalMonstersDefeated: 0,
+  totalBossesDefeated: 0,
+  totalItemsCrafted: 0,
 };
 
 /**
