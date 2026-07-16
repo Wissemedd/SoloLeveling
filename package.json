@@ -54,5 +54,13 @@
   "private": true,
   "jest": {
     "preset": "jest-expo"
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": ["expo-av"],
+        "listUnknownPackages": false
+      }
+    }
   }
 }
