@@ -60,6 +60,9 @@ export function AvatarSilhouette({
   const hasArmor = !!equippedSlots.armor;
   const hasBoots = !!equippedSlots.boots;
   const hasWeapon = !!equippedSlots.weapon;
+  const hasGloves = !!equippedSlots.gloves;
+  const hasRing = !!equippedSlots.ring;
+  const hasNecklace = !!equippedSlots.necklace;
   const torsoColor = hasArmor ? colors.slate : outfit;
 
   const w = 160;
@@ -213,8 +216,15 @@ export function AvatarSilhouette({
             {/* arms */}
             <Rect x={w * 0.16} y={h * 0.38} width={w * 0.11} height={h * 0.26} rx={7} fill={skin} />
             <Rect x={w * 0.73} y={h * 0.38} width={w * 0.11} height={h * 0.26} rx={7} fill={skin} />
-            <Circle cx={w * 0.215} cy={h * 0.65} r={w * 0.035} fill={skin} />
-            <Circle cx={w * 0.785} cy={h * 0.65} r={w * 0.035} fill={skin} />
+            {hasGloves ? (
+              <>
+                <Rect x={w * 0.155} y={h * 0.6} width={w * 0.12} height={h * 0.055} rx={6} fill={colors.abyss[200]} />
+                <Rect x={w * 0.725} y={h * 0.6} width={w * 0.12} height={h * 0.055} rx={6} fill={colors.abyss[200]} />
+              </>
+            ) : null}
+            <Circle cx={w * 0.215} cy={h * 0.65} r={w * 0.035} fill={hasGloves ? colors.abyss[100] : skin} />
+            <Circle cx={w * 0.785} cy={h * 0.65} r={w * 0.035} fill={hasGloves ? colors.abyss[100] : skin} />
+            {hasRing ? <Circle cx={w * 0.785} cy={h * 0.662} r={w * 0.01} fill={colors.gold[200]} /> : null}
 
             {/* torso — wider shoulders, tapered waist */}
             <AnimatedPath
@@ -233,6 +243,12 @@ export function AvatarSilhouette({
               <>
                 <Rect x={w * 0.24} y={h * 0.335} width={w * 0.14} height={h * 0.06} rx={4} fill={colors.abyss[200]} />
                 <Rect x={w * 0.62} y={h * 0.335} width={w * 0.14} height={h * 0.06} rx={4} fill={colors.abyss[200]} />
+              </>
+            ) : null}
+            {hasNecklace ? (
+              <>
+                <Path d={`M ${w * 0.46} ${h * 0.345} Q ${w * 0.5} ${h * 0.37} ${w * 0.54} ${h * 0.345}`} stroke={colors.gold[200]} strokeWidth={1} fill="none" opacity={0.85} />
+                <Circle cx={w * 0.5} cy={h * 0.375} r={w * 0.016} fill={colors.gold[200]} />
               </>
             ) : null}
 

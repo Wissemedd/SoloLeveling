@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ScreenBackground, GlassPanel, StatBar, GlowButton } from "@/design-system/components";
+import { ScreenBackground, GlassPanel, StatBar, GlowButton, Chip } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import type { AdventureStackParamList } from "@/app/navigation/types";
 import { usePlayerStore } from "@/features/player/store/playerStore";
@@ -197,13 +197,16 @@ export function CombatScreen({ route, navigation }: Props) {
 
   const currentMessage = lastStep ? eventText(lastStep) : `A ${currentMonster?.name ?? "creature"} blocks your path.`;
 
+  const isBossEncounter = !!currentMonster?.isBoss;
+
   return (
-    <ScreenBackground accent="danger" particles={false}>
+    <ScreenBackground accent={isBossEncounter ? "gold" : "danger"} particles={false}>
       <View style={styles.content}>
         <Pressable style={styles.stage} onPress={() => setFastForward(true)}>
           <View style={styles.stageRow}>
             {currentMonster ? (
-              <GlassPanel glow="danger" style={styles.hpPanel}>
+              <GlassPanel glow={isBossEncounter ? "gold" : "danger"} style={styles.hpPanel}>
+                {isBossEncounter ? <Chip label="BOSS" tier="legendary" /> : null}
                 <StatBar label={currentMonster.name} value={Math.max(0, monsterHp)} max={currentMonster.maxHealth} accent={hpAccent(monsterHp, currentMonster.maxHealth)} height={8} />
               </GlassPanel>
             ) : (
@@ -230,7 +233,7 @@ export function CombatScreen({ route, navigation }: Props) {
           ))}
         </Pressable>
 
-        <GlassPanel glow="danger" style={styles.messageBox}>
+        <GlassPanel glow={isBossEncounter ? "gold" : "danger"} style={styles.messageBox}>
           <Text style={styles.messageText}>{currentMessage}</Text>
           {!playbackDone ? <Text style={styles.messageCue}>▼</Text> : null}
         </GlassPanel>
@@ -268,7 +271,7 @@ const styles = StyleSheet.create({
   title: { fontFamily: fonts.display, fontSize: 16, color: colors.white, textAlign: "center" },
   stage: { height: 320, position: "relative", gap: 8 },
   stageRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  hpPanel: { padding: 10, width: "56%" },
+  hpPanel: { padding: 10, width: "56%", gap: 4 },
   enemySpriteWrap: { marginTop: 4 },
   playerSpriteWrap: { alignSelf: "flex-end", marginBottom: 4 },
   messageBox: { padding: 14, minHeight: 64, justifyContent: "center" },

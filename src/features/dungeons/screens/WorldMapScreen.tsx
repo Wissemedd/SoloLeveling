@@ -1,25 +1,13 @@
 import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ScreenBackground, GlassPanel, SectionHeader } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import type { AdventureStackParamList } from "@/app/navigation/types";
 import { regions } from "../data/regions";
-import type { RegionTheme } from "../types";
+import { RegionEmblem } from "../components/RegionEmblem";
 
 type Props = NativeStackScreenProps<AdventureStackParamList, "WorldMap">;
-
-const THEME_ICON: Record<RegionTheme, keyof typeof Ionicons.glyphMap> = {
-  forest: "leaf",
-  mountains: "triangle",
-  desert: "sunny",
-  ruins: "business",
-  city: "business",
-  marsh: "water",
-  frozen_lands: "snow",
-  volcano: "flame",
-};
 
 export function WorldMapScreen({ navigation }: Props) {
   return (
@@ -33,7 +21,7 @@ export function WorldMapScreen({ navigation }: Props) {
             onPress={() => navigation.navigate("GateList", { regionId: region.id })}
           >
             <GlassPanel glow={region.unlocked ? "arcane" : "none"} style={[styles.card, !region.unlocked && styles.cardLocked]}>
-              <Ionicons name={region.unlocked ? THEME_ICON[region.theme] : "lock-closed"} size={22} color={region.unlocked ? colors.arcane[200] : colors.slate} />
+              <RegionEmblem theme={region.theme} size={52} locked={!region.unlocked} animated={region.unlocked} />
               <View style={styles.cardText}>
                 <Text style={styles.cardTitle}>{region.name}</Text>
                 <Text style={styles.cardDescription}>{region.unlocked ? region.description : "Coming soon."}</Text>

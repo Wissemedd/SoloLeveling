@@ -6,6 +6,7 @@ import { ScreenBackground, GlassPanel, SectionHeader } from "@/design-system/com
 import { colors, fonts, rankColors } from "@/design-system/theme";
 import type { AdventureStackParamList } from "@/app/navigation/types";
 import { usePlayerStore } from "@/features/player/store/playerStore";
+import { MonsterSprite } from "@/features/monsters/components/MonsterSprite";
 import { getRegion } from "../data/regions";
 import { useDungeonStore } from "../store/dungeonStore";
 import { isGateExpired } from "../engine/gateEngine";
@@ -35,8 +36,11 @@ export function GateListScreen({ route, navigation }: Props) {
         {gates.map((gate) => (
           <Pressable key={gate.id} onPress={() => navigation.navigate("GateDetail", { gateId: gate.id, regionId })}>
             <GlassPanel glow={gate.isFeaturedBossGate ? "gold" : "danger"} style={styles.card}>
-              <View style={[styles.rankBadge, { borderColor: rankColors[gate.rank] }]}>
-                <Text style={[styles.rankLabel, { color: rankColors[gate.rank] }]}>{gate.rank}</Text>
+              <View style={styles.spriteWrap}>
+                <MonsterSprite monster={gate.boss} size={52} animated={false} />
+                <View style={[styles.rankChip, { borderColor: rankColors[gate.rank] }]}>
+                  <Text style={[styles.rankLabel, { color: rankColors[gate.rank] }]}>{gate.rank}</Text>
+                </View>
               </View>
               <View style={styles.cardText}>
                 <Text style={styles.cardTitle}>{gate.isFeaturedBossGate ? gate.boss.name : `${gate.rank}-Rank Gate`}</Text>
@@ -57,8 +61,20 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48, gap: 10 },
   emptyText: { fontFamily: fonts.body, fontSize: 13, color: colors.slate },
   card: { flexDirection: "row", alignItems: "center", gap: 12, padding: 14 },
-  rankBadge: { width: 36, height: 36, borderRadius: 18, borderWidth: 2, alignItems: "center", justifyContent: "center" },
-  rankLabel: { fontFamily: fonts.display, fontSize: 13 },
+  spriteWrap: { width: 52, height: 52 },
+  rankChip: {
+    position: "absolute",
+    right: -6,
+    bottom: -6,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
+    backgroundColor: colors.void[200],
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rankLabel: { fontFamily: fonts.display, fontSize: 11 },
   cardText: { flex: 1, gap: 2 },
   cardTitle: { fontFamily: fonts.bodySemibold, fontSize: 14, color: colors.white },
   cardMeta: { fontFamily: fonts.body, fontSize: 11, color: colors.slate },
