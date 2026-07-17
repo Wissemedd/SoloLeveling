@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 import { colors } from "../theme";
 import { ParticleField } from "./ParticleField";
 
@@ -25,6 +26,11 @@ const ACCENT_GLOW: Record<NonNullable<Props["accent"]>, string> = {
  */
 export function ScreenBackground({ children, accent = "neon", particles = true }: Props) {
   const glowColor = ACCENT_GLOW[accent];
+  // The bottom tab bar floats (position: absolute) over every screen in its
+  // stack, however deeply pushed — reserve its height here, once, so no
+  // screen's trailing content/buttons render underneath it. Resolves to 0
+  // outside a tab navigator (onboarding), where there's no bar to clear.
+  const tabBarHeight = useContext(BottomTabBarHeightContext) ?? 0;
 
   return (
     <View style={styles.container}>
@@ -37,7 +43,7 @@ export function ScreenBackground({ children, accent = "neon", particles = true }
       <View pointerEvents="none" style={[styles.orb, styles.orbTop, { backgroundColor: glowColor }]} />
       <View pointerEvents="none" style={[styles.orb, styles.orbBottom, { backgroundColor: colors.arcane[500] }]} />
       {particles ? <ParticleField density={18} /> : null}
-      <View style={styles.content}>{children}</View>
+      <View style={[styles.content, { paddingBottom: tabBarHeight }]}>{children}</View>
     </View>
   );
 }

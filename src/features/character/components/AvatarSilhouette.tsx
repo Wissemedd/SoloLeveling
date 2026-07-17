@@ -307,10 +307,22 @@ function HairShape({ style, color, w, h }: { style: CharacterAppearance["hairSty
     case "shaved":
       return null;
     case "long":
+      // A hairline cap (kept well clear of the eyes, unlike the side locks
+      // it's not a full curtain) plus two separate side locks hanging past
+      // the shoulders outside the face — a single wide shape here used to
+      // fully cover the face instead of framing it.
       return (
         <>
           <Path
-            d={`M ${w * 0.33} ${h * 0.15} Q ${w * 0.5} ${h * 0.03} ${w * 0.67} ${h * 0.15} L ${w * 0.66} ${h * 0.4} Q ${w * 0.6} ${h * 0.32} ${w * 0.5} ${h * 0.32} Q ${w * 0.4} ${h * 0.32} ${w * 0.34} ${h * 0.4} Z`}
+            d={`M ${w * 0.3} ${h * 0.18} Q ${w * 0.24} ${h * 0.3} ${w * 0.27} ${h * 0.42} L ${w * 0.35} ${h * 0.42} Q ${w * 0.33} ${h * 0.28} ${w * 0.36} ${h * 0.19} Z`}
+            fill={color}
+          />
+          <Path
+            d={`M ${w * 0.7} ${h * 0.18} Q ${w * 0.76} ${h * 0.3} ${w * 0.73} ${h * 0.42} L ${w * 0.65} ${h * 0.42} Q ${w * 0.67} ${h * 0.28} ${w * 0.64} ${h * 0.19} Z`}
+            fill={color}
+          />
+          <Path
+            d={`M ${w * 0.32} ${h * 0.16} Q ${w * 0.5} ${h * 0.03} ${w * 0.68} ${h * 0.16} L ${w * 0.64} ${h * 0.2} Q ${w * 0.5} ${h * 0.12} ${w * 0.36} ${h * 0.2} Z`}
             fill={color}
           />
           <Path

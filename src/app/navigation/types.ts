@@ -1,6 +1,6 @@
 import type { NavigatorScreenParams } from "@react-navigation/native";
 import type { CompleteWorkoutSummary } from "@/features/workouts/hooks/useCompleteWorkout";
-import type { RunGateSummary } from "@/features/combat/hooks/useRunGate";
+import type { RunGateSummary } from "@/features/combat/hooks/useFinalizeGateRun";
 import type { Gate } from "@/features/dungeons/types";
 
 export type OnboardingStackParamList = {
@@ -29,8 +29,9 @@ export type ProfileStackParamList = {
 
 /**
  * The Aventure tab — Gates/combat never write XP or RpgStats (see
- * combat/hooks/useRunGate.ts); this stack is purely a reward/visualization
- * layer on top of the real progression in player/workouts/activities.
+ * combat/hooks/usePrepareGateRun.ts and useFinalizeGateRun.ts); this stack
+ * is purely a reward/visualization layer on top of the real progression in
+ * player/workouts/activities.
  */
 export type AdventureStackParamList = {
   Hub: undefined;

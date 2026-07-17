@@ -12,16 +12,12 @@ import { useInventoryStore } from "@/features/inventory/store/inventoryStore";
 import { EQUIPMENT_SLOT_IDS } from "@/features/inventory/types";
 import type { CombatVisualState } from "@/design-system/combatVisuals";
 import type { MonsterDefinition } from "@/features/monsters/types";
-import { useRunGate, type RunGateSummary } from "../hooks/useRunGate";
-import type { CombatEvent, CombatEventType } from "../types";
+import { useInteractiveCombat, type PlaybackStep } from "../hooks/useInteractiveCombat";
+import { useFinalizeGateRun, type RunGateSummary } from "../hooks/useFinalizeGateRun";
+import type { CombatEventType } from "../types";
 import { FloatingDamageText, type DamagePopupAnchor, type DamagePopupTone } from "../components/FloatingDamageText";
 
 type Props = NativeStackScreenProps<AdventureStackParamList, "Combat">;
-
-type PlaybackStep = {
-  monster: MonsterDefinition;
-  event: CombatEvent;
-};
 
 type DamagePopup = { id: number; text: string; tone: DamagePopupTone; anchor: DamagePopupAnchor };
 
@@ -71,8 +67,11 @@ const IDLE_STATE: CombatVisualState = { phase: "idle", nonce: -1 };
 
 export function CombatScreen({ route, navigation }: Props) {
   const { gate } = route.params;
-  const runGate = useRunGate();
+  const combat = useInteractiveCombat(gate);
+  const finalizeGateRun = useFinalizeGateRun();
+  const finalizedRef = useRef(false);
   const [summary, setSummary] = useState<RunGateSummary | null>(null);
+
   const [stepIndex, setStepIndex] = useState(0);
   const [fastForward, setFastForward] = useState(false);
   const [popups, setPopups] = useState<DamagePopup[]>([]);
@@ -88,28 +87,8 @@ export function CombatScreen({ route, navigation }: Props) {
     [equipped],
   );
 
-  // Runs the fight exactly once on mount — deliberately outside render (the
-  // old lazy-useState-initializer version called this during render, which
-  // triggers "setState while rendering a different component" since runGate
-  // writes to several Zustand stores other screens subscribe to).
-  useEffect(() => {
-    setSummary(runGate(gate));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const steps = useMemo<PlaybackStep[]>(() => {
-    if (!summary?.log) return [];
-    const all: PlaybackStep[] = [];
-    for (const encounter of summary.log.encounters) {
-      const monster = gate.encounterMonsters.find((m) => m.id === encounter.monsterId);
-      if (!monster) continue;
-      for (const event of encounter.events) all.push({ monster, event });
-    }
-    if (summary.log.bossEncounter) {
-      for (const event of summary.log.bossEncounter.events) all.push({ monster: gate.boss, event });
-    }
-    return all;
-  }, [summary, gate]);
+  const { steps } = combat;
+  const caughtUp = stepIndex >= steps.length;
 
   const addPopup = (text: string, tone: DamagePopupTone, anchor: DamagePopupAnchor) => {
     const id = popupIdRef.current++;
@@ -118,7 +97,7 @@ export function CombatScreen({ route, navigation }: Props) {
   const removePopup = (id: number) => setPopups((p) => p.filter((x) => x.id !== id));
 
   useEffect(() => {
-    if (!summary?.log || stepIndex >= steps.length) return;
+    if (caughtUp) return;
     const step = steps[stepIndex];
     const { event } = step;
 
@@ -151,33 +130,46 @@ export function CombatScreen({ route, navigation }: Props) {
     const timer = setTimeout(() => setStepIndex((i) => i + 1), eventDuration(event.type, fastForward));
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stepIndex, steps, summary, fastForward]);
+  }, [stepIndex, steps, fastForward]);
 
   const scrollRef = useRef<ScrollView>(null);
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: true });
   }, [stepIndex]);
 
-  if (!summary) {
+  // Once the run has concluded AND the player has watched the last round
+  // play out, grant rewards exactly once.
+  useEffect(() => {
+    if (combat.concluded && caughtUp && combat.finalLog && !finalizedRef.current) {
+      finalizedRef.current = true;
+      setSummary(finalizeGateRun(gate, combat.finalLog, combat.characterMaxHp));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [combat.concluded, caughtUp, combat.finalLog]);
+
+  if (!combat.ready) {
     return <ScreenBackground accent="danger" particles={false}>{null}</ScreenBackground>;
   }
 
-  const visibleSteps = steps.slice(0, stepIndex);
-  const playbackDone = stepIndex >= steps.length;
-  const lastStep = visibleSteps[visibleSteps.length - 1];
-
-  if (!summary.ok || !summary.log) {
+  if (combat.denied) {
     return (
       <ScreenBackground accent="danger" particles={false}>
         <View style={styles.centered}>
-          <Text style={styles.title}>{summary.reason ?? "Unable to enter this Gate."}</Text>
+          <Text style={styles.title}>{combat.denied}</Text>
           <GlowButton label="Back" variant="ghost" onPress={() => navigation.goBack()} style={{ marginTop: 16 }} />
         </View>
       </ScreenBackground>
     );
   }
 
-  const characterMaxHp = summary.characterMaxHealth ?? summary.log.finalCharacterHp ?? 1;
+  const visibleSteps = steps.slice(0, stepIndex);
+  const lastStep = visibleSteps[visibleSteps.length - 1];
+
+  const currentMonster: MonsterDefinition | null = caughtUp
+    ? combat.monster ?? lastStep?.monster ?? null
+    : lastStep?.monster ?? steps[0]?.monster ?? combat.monster ?? null;
+
+  const characterMaxHp = combat.characterMaxHp || 1;
   const characterHp = (() => {
     for (let i = visibleSteps.length - 1; i >= 0; i--) {
       if (visibleSteps[i].event.actor === "enemy") return visibleSteps[i].event.targetHpAfter;
@@ -185,7 +177,6 @@ export function CombatScreen({ route, navigation }: Props) {
     return characterMaxHp;
   })();
 
-  const currentMonster = lastStep?.monster ?? steps[0]?.monster;
   const monsterHp = (() => {
     for (let i = visibleSteps.length - 1; i >= 0; i--) {
       if (visibleSteps[i].event.actor === "character" && visibleSteps[i].monster.id === currentMonster?.id) {
@@ -196,8 +187,8 @@ export function CombatScreen({ route, navigation }: Props) {
   })();
 
   const currentMessage = lastStep ? eventText(lastStep) : `A ${currentMonster?.name ?? "creature"} blocks your path.`;
-
   const isBossEncounter = !!currentMonster?.isBoss;
+  const awaitingAction = caughtUp && !combat.concluded;
 
   return (
     <ScreenBackground accent={isBossEncounter ? "gold" : "danger"} particles={false}>
@@ -235,13 +226,23 @@ export function CombatScreen({ route, navigation }: Props) {
 
         <GlassPanel glow={isBossEncounter ? "gold" : "danger"} style={styles.messageBox}>
           <Text style={styles.messageText}>{currentMessage}</Text>
-          {!playbackDone ? <Text style={styles.messageCue}>▼</Text> : null}
+          {!caughtUp ? <Text style={styles.messageCue}>▼</Text> : null}
         </GlassPanel>
 
-        {!playbackDone ? (
-          <Pressable onPress={() => setStepIndex(steps.length)} style={styles.skipButton}>
-            <Text style={styles.skipLabel}>Skip ▶▶</Text>
-          </Pressable>
+        {awaitingAction ? (
+          <View style={styles.actionMenu}>
+            <GlowButton label="Attack" variant="neon" onPress={() => combat.act({ type: "attack" })} style={styles.actionButton} />
+            {combat.activeSkill ? (
+              <GlowButton
+                label={combat.canUseSkill ? combat.activeSkill.name : "On cooldown"}
+                variant="arcane"
+                disabled={!combat.canUseSkill}
+                onPress={() => combat.act({ type: "skill" })}
+                style={styles.actionButton}
+              />
+            ) : null}
+            <GlowButton label="Auto" variant="ghost" onPress={() => combat.autoResolveEncounter()} style={styles.actionButton} />
+          </View>
         ) : null}
 
         <ScrollView ref={scrollRef} style={styles.log} contentContainerStyle={styles.logContent}>
@@ -252,10 +253,10 @@ export function CombatScreen({ route, navigation }: Props) {
           ))}
         </ScrollView>
 
-        {playbackDone ? (
+        {summary ? (
           <GlowButton
-            label={summary.log.gateCleared ? "Claim rewards" : "Retreat"}
-            variant={summary.log.gateCleared ? "gold" : "ghost"}
+            label={summary.log?.gateCleared ? "Claim rewards" : "Retreat"}
+            variant={summary.log?.gateCleared ? "gold" : "ghost"}
             size="lg"
             onPress={() => navigation.replace("CombatResults", { summary })}
           />
@@ -277,8 +278,8 @@ const styles = StyleSheet.create({
   messageBox: { padding: 14, minHeight: 64, justifyContent: "center" },
   messageText: { fontFamily: fonts.bodyMedium, fontSize: 14, color: colors.white, lineHeight: 20 },
   messageCue: { position: "absolute", right: 12, bottom: 8, color: colors.slate, fontSize: 12 },
-  skipButton: { alignSelf: "flex-end", paddingHorizontal: 10, paddingVertical: 4 },
-  skipLabel: { fontFamily: fonts.bodyMedium, fontSize: 12, color: colors.slate },
+  actionMenu: { flexDirection: "row", gap: 8 },
+  actionButton: { flex: 1 },
   log: { flex: 1 },
   logContent: { gap: 4, paddingBottom: 12 },
   logLine: { fontFamily: fonts.body, fontSize: 11, color: "rgba(137,145,184,0.7)" },
