@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { ScreenBackground, GlassPanel, SectionHeader, Chip } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useInventoryStore } from "@/features/inventory/store/inventoryStore";
 import { chipTierForItemRarity } from "@/features/inventory/engine/rarityDisplay";
+import { ItemIcon } from "@/features/inventory/components/ItemIcon";
 import { getShopCatalog, purchaseItem } from "../engine/shopEngine";
 
 // The catalog is static content — computed once at module load rather than
@@ -40,7 +40,7 @@ export function ShopScreen() {
         {feedback ? <Text style={styles.feedback}>{feedback}</Text> : null}
         {catalog.map((def) => (
           <GlassPanel key={def.id} glow="none" style={styles.row}>
-            <Ionicons name={def.icon} size={20} color={colors.gold[200]} />
+            <ItemIcon def={def} size={40} />
             <View style={styles.rowText}>
               <View style={styles.rowTitleLine}>
                 <Text style={styles.rowTitle}>{def.name}</Text>

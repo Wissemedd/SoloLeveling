@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Pressable, SectionList, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { ScreenBackground, GlassPanel, SectionHeader, Chip } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
@@ -8,6 +7,7 @@ import { getItemDefinition } from "../data/items";
 import { useInventoryStore } from "../store/inventoryStore";
 import { slotForCategory } from "../engine/inventoryEngine";
 import { chipTierForItemRarity } from "../engine/rarityDisplay";
+import { ItemIcon } from "../components/ItemIcon";
 import type { EquipmentSlotId, ItemCategory, ItemDefinition, InventoryItemInstance } from "../types";
 
 const CATEGORY_LABELS: Record<ItemCategory, string> = {
@@ -98,7 +98,7 @@ const InventoryRow = React.memo(function InventoryRow({
 }) {
   return (
     <GlassPanel glow={isEquipped ? "arcane" : "none"} style={styles.row}>
-      <Ionicons name={def.icon} size={18} color={isEquipped ? colors.arcane[200] : colors.slate} />
+      <ItemIcon def={def} size={36} upgradeLevel={instance.upgradeLevel} />
       <View style={styles.rowText}>
         <View style={styles.rowTitleLine}>
           <Text style={styles.rowTitle}>

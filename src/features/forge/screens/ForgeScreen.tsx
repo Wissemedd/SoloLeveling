@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { ScreenBackground, GlassPanel, SectionHeader, GlowButton } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
 import { usePlayerStore } from "@/features/player/store/playerStore";
@@ -8,6 +7,7 @@ import { useLifetimeStatsStore } from "@/features/player/store/lifetimeStatsStor
 import { useEvaluateProgressionRewards } from "@/features/achievements/hooks/useEvaluateProgressionRewards";
 import { useInventoryStore } from "@/features/inventory/store/inventoryStore";
 import { getItemDefinition } from "@/features/inventory/data/items";
+import { ItemIcon } from "@/features/inventory/components/ItemIcon";
 import type { InventoryItemInstance } from "@/features/inventory/types";
 import { attemptForge, forgeCostForLevel, forgeSuccessChance, FORGE_MAX_LEVEL } from "../engine/forgeEngine";
 
@@ -114,7 +114,7 @@ const ForgeItemRow = React.memo(function ForgeItemRow({
   return (
     <Pressable onPress={() => onSelect(instance.instanceId)}>
       <GlassPanel glow={isActive ? "danger" : "none"} style={styles.itemRow}>
-        <Ionicons name={def.icon} size={18} color={isActive ? colors.danger[300] : colors.slate} />
+        <ItemIcon def={def} size={32} upgradeLevel={instance.upgradeLevel} />
         <Text style={styles.itemLabel}>
           {def.name} {instance.upgradeLevel > 0 ? `+${instance.upgradeLevel}` : ""}
         </Text>

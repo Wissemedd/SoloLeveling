@@ -50,6 +50,13 @@ export const colors = {
     400: "#FF3B4E",
     500: "#C2202F",
   },
+  /** Poison-affinity tint for monster sprites — the palette's only green. */
+  toxic: {
+    200: "#B6F09C",
+    300: "#7FDB5E",
+    400: "#4FB83A",
+    500: "#347A26",
+  },
   white: "#F5F7FF",
   slate: "#8991B8",
 } as const;

@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ScreenBackground, GlassPanel, SectionHeader, Chip, GlowButton, InfoRow } from "@/design-system/components";
 import { colors, fonts } from "@/design-system/theme";
@@ -9,6 +8,7 @@ import { usePlayerStore } from "@/features/player/store/playerStore";
 import { useDungeonStore } from "../store/dungeonStore";
 import { isGateExpired } from "../engine/gateEngine";
 import { chipTierForItemRarity } from "@/features/inventory/engine/rarityDisplay";
+import { MonsterSprite } from "@/features/monsters/components/MonsterSprite";
 
 type Props = NativeStackScreenProps<AdventureStackParamList, "GateDetail">;
 
@@ -57,7 +57,7 @@ export function GateDetailScreen({ route, navigation }: Props) {
         <SectionHeader title="Boss" />
         <GlassPanel glow="gold" style={styles.panel}>
           <View style={styles.bossRow}>
-            <Ionicons name={gate.boss.icon} size={20} color={colors.gold[200]} />
+            <MonsterSprite monster={gate.boss} size={64} animated={false} />
             <Text style={styles.bossName}>{gate.boss.name}</Text>
           </View>
           <Text style={styles.cardDescription}>{gate.boss.description}</Text>

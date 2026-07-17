@@ -5,6 +5,7 @@ import { ScreenBackground, GlassPanel, SectionHeader, Chip } from "@/design-syst
 import { colors, fonts } from "@/design-system/theme";
 import { monsters } from "../data/monsters";
 import { useBestiaryStore } from "../store/bestiaryStore";
+import { MonsterSprite } from "../components/MonsterSprite";
 
 export function BestiaryScreen() {
   const entries = useBestiaryStore((s) => s.entries);
@@ -19,7 +20,13 @@ export function BestiaryScreen() {
           const discovered = !!entry;
           return (
             <GlassPanel key={monster.id} glow={monster.isBoss ? "gold" : "none"} style={styles.row}>
-              <Ionicons name={discovered ? monster.icon : "help-circle"} size={22} color={discovered ? colors.danger[300] : colors.slate} />
+              {discovered ? (
+                <MonsterSprite monster={monster} size={48} animated={false} />
+              ) : (
+                <View style={styles.unknownIcon}>
+                  <Ionicons name="help-circle" size={22} color={colors.slate} />
+                </View>
+              )}
               <View style={styles.rowText}>
                 <View style={styles.titleLine}>
                   <Text style={styles.name}>{discovered ? monster.name : "???"}</Text>
@@ -49,6 +56,7 @@ export function BestiaryScreen() {
 const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48, gap: 10 },
   row: { flexDirection: "row", alignItems: "flex-start", gap: 12, padding: 14 },
+  unknownIcon: { width: 48, height: 48, alignItems: "center", justifyContent: "center" },
   rowText: { flex: 1, gap: 4 },
   titleLine: { flexDirection: "row", alignItems: "center", gap: 8, flexWrap: "wrap" },
   name: { fontFamily: fonts.bodySemibold, fontSize: 14, color: colors.white },

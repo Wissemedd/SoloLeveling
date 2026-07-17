@@ -1,4 +1,20 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter \\\\\"CommandLine like '%expo start%'\\\\\" | Select-Object ProcessId, CommandLine\")",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"CommandLine like '%expo start%'\" | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; Start-Sleep -Seconds 2; Get-CimInstance Win32_Process -Filter \"CommandLine like '%expo start%'\" | Select-Object ProcessId)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"CommandLine like '%expo%'\")",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='node.exe'\")",
+      "Bash(sed -i 's#localhost:8081#localhost:8090#' \"C:\\\\Users\\\\Bousdira\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Bousdira-Desktop-Projets-SoloLeveling\\\\30a8bbf7-add1-4a09-b9bc-0112bce06e98\\\\scratchpad\\\\check-tabbar.js\")",
+      "Bash(export NODE_PATH=\"C:\\\\Users\\\\Bousdira\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\node_modules\")",
+      "Bash(node \"C:\\\\Users\\\\Bousdira\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Bousdira-Desktop-Projets-SoloLeveling\\\\30a8bbf7-add1-4a09-b9bc-0112bce06e98\\\\scratchpad\\\\check-tabbar.js\")",
+      "PowerShell(Stop-Process -Id 28124 -Force)",
+      "Bash(npx tsc *)",
+      "Bash(node \"C:\\\\Users\\\\Bousdira\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Bousdira-Desktop-Projets-SoloLeveling\\\\30a8bbf7-add1-4a09-b9bc-0112bce06e98\\\\scratchpad\\\\check-charcreate.js\")",
+      "Bash(npx jest *)",
+      "Bash(node \"C:\\\\Users\\\\Bousdira\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Bousdira-Desktop-Projets-SoloLeveling\\\\30a8bbf7-add1-4a09-b9bc-0112bce06e98\\\\scratchpad\\\\check-avatar.js\")"
+    ]
+  },
   "enabledPlugins": {
     "expo@claude-plugins-official": true
   }
